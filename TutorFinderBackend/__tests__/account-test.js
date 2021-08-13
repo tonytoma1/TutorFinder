@@ -110,6 +110,20 @@ describe('Register for an account', () => {
                                 });
         expect(response.status).toBe(200);
     })
+    it('given tutor information, router.post("/register-tutor") should return status 200', async () => {
+        const subjects = ['math', 'science'];
+        const response = await request(app)
+                               .post('/api/account/register-tutor')
+                               .send({
+                                    email: 'registertutor@example.com',
+                                    password: 'password',
+                                    firstName: 'student',
+                                    lastName: 'test',
+                                    subjects: subjects,
+                                    price: 20
+                            });
+        expect(response.status).toBe(200);
+    })
 })
 
 afterAll((done) => {
