@@ -4,17 +4,17 @@ const Tutor = require('../models/tutor');
 const bcrypt = require('bcryptjs');
 
 async function createStudentAccount(email, password, firstName, lastName, subjects) {
-    
     const student = new Student({
         subjects: subjects
     });
-   const savedStudent = await student.save();
+    const savedStudent = await student.save();
+
     const account = new Account({
         email: email,
         password: bcrypt.hashSync(password, 10),
-        first_name: firstName,
-        last_name: lastName,
-        account_type: savedStudent._id,
+        firstName: firstName,
+        lastName: lastName,
+        accountType: savedStudent._id,
         onModel: 'Student'
     });
 
@@ -31,9 +31,9 @@ async function createTutorAccount(email, password, firstName, lastName, subjects
     const account = new Account({
         email: email,
         password: bcrypt.hashSync(password, 10),
-        first_name: firstName,
-        last_name: lastName,
-        account_type: savedTutor._id,
+        firstName: firstName,
+        lastName: lastName,
+        accountType: savedTutor._id,
         onModel: 'Tutor'
     });
 

@@ -96,6 +96,22 @@ describe('login endpoint', () => {
 });
 
 
+describe('Register for an account', () => {
+    it('given student information, router.post("/register-student") should return status 200', async () => {
+        const subjects = ['math', 'science'];
+        const response = await request(app)
+                                .post('/api/account/register-student')
+                                .send({
+                                    email: 'registerstudent@example.com',
+                                    password: 'password',
+                                    firstName: 'student',
+                                    lastName: 'test',
+                                    subjects: subjects
+                                });
+        expect(response.status).toBe(200);
+    })
+})
+
 afterAll((done) => {
     mongoose.connection.close();
     done();
