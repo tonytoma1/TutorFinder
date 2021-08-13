@@ -5,4 +5,9 @@ const createAccountRules = [
     check('password').exists().isString()
 ]
 
-module.exports = {createAccount}
+const loginRules = [
+    check('email').exists().isEmail().normalizeEmail(),
+    check('password').exists().isString()
+]
+
+module.exports = {createAccountRules, loginRules}

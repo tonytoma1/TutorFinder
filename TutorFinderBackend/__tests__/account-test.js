@@ -3,6 +3,9 @@ var mongoose = require('mongoose');
 const Account = require('../models/account');
 const Tutor = require('../models/tutor');
 const Student = require('../models/student');
+const request = require('supertest');
+const express = require('express');
+const app = require('../app');
 require('dotenv').config()
 
 beforeAll(async () => {
@@ -74,6 +77,23 @@ it('given login credentials, login() returns account', async () => {
     await createStudentAccount('student@example.com', 'password', 'john', 'Doe', subjects);
     expect(await login('student@example.com', 'password')).toBeTruthy();
 })
+
+describe('login endpoint', () => {
+    it('given login credentials, router.post("/login") should return status 200', async () => {
+        // create an acount
+        const subjects = ['math', 'science'];
+        const createdAccount = await createStudentAccount('studentlogin@example.com', 'password', 'john', 'doe', subjects);
+        const response = await request(app)
+                            .post('/api/account/login')
+                            .send({
+                                email: createdAccount.email,
+                                password: 'password'
+                            });
+        expect(response.status).toBe(200);
+        
+        
+    }, 30000)
+});
 
 
 afterAll((done) => {

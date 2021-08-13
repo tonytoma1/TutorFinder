@@ -16,8 +16,11 @@
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "jest": "^27.0.6",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.6",
-    "morgan": "~1.9.1",
-    "supertest": "^6.1.4"
+    "morgan": "~1.9.1"
+  },
+  "devDependencies": {
+    "supertest": "^6.1.5"
   }
 }
