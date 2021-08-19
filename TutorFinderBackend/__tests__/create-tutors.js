@@ -1,7 +1,12 @@
 const Tutor = require('../models/tutor');
+const Account = require('../models/account');
 const request = require('supertest');
 const app = require('../app');
 
+beforeAll(async () => {
+    await Account.deleteMany({});
+    await Tutor.deleteMany({});
+})
 
 it('given tutor information, router.post("/register-tutor") should return status 200', async () => {
     const subjects = ['math', 'science'];

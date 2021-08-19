@@ -26,12 +26,12 @@ function TutorList () {
               renderItem={({item}) => 
                         <TouchableOpacity style={styles.tutorContainer}>
                             <View style={styles.image}>
-                            <Image source={{uri: item.profilePicture}} style={{width: 100, height: 100}}/>
+                            <Image style={styles.profileImage} source={{uri: item.profilePicture}} />
                             </View>
 
                             <View style={styles.tutorInfo}>
-                                <Text style={styles.name}>{item.firstName} {item.lastName}</Text>
-                        
+                                <Text style={styles.name, styles.name}>{item.firstName} {item.lastName}</Text>
+                                {item.accountType.jobTitle != null ? <Text>{item.accountType.jobTitle}</Text> : null }
                                 <Text>{item.email}</Text>
                                 <Text>${item.accountType.price}/hr</Text>
                                 <Text>Subjects</Text>
@@ -66,17 +66,29 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     image: {
-        flexDirection: 'column'
+        flexDirection: 'column',
+        marginLeft: 10,
+        marginTop: 10,
+    },
+    profileImage: {
+        borderRadius: 30,
+        height: 100,
+        width: 100
     },
     tutorInfo: {
         flexDirection: 'column',
-        marginLeft: 10
+        marginLeft: 10,
+        marginTop: 10
     },
     subjectsContainer: {
         flexDirection: 'row'
     },
     subject: {
         marginLeft: 10
+    },
+    name: {
+        fontSize: 20,
+        fontFamily: 'Montserrat'
     }
     
 })

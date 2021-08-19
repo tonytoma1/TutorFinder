@@ -27,7 +27,7 @@ const App = () => {
     <AuthenticationContextProvider>
       <NavigationContainer>
         <Stack.Navigator>
-         {/* <Stack.Screen name="Home" component={Login} options={{headerShown: false}}/> */}
+          <Stack.Screen name="Home" component={Login} options={{headerShown: false}}/> 
           <Stack.Screen name="Main" component={MainTabs}></Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>  
