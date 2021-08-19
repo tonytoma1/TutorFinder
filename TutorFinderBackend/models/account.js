@@ -8,7 +8,7 @@ const account = new Schema({
     firstName: {type: String, required: true},
     lastName: {type: String, required: true},
     profilePicture: {type: String, default: null},
-    accountType: {type: Schema.Types.ObjectId, required: true},
+    accountType: {type: Schema.Types.ObjectId, required: true, refPath: 'onModel'},
     onModel: {type: String, required: true, enum: ['Tutor', 'Student']}
 });
 

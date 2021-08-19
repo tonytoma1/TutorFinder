@@ -1,4 +1,4 @@
-const {login, createStudentAccount, createTutorAccount} = require('../services/account-service');
+const {login, createStudentAccount, createTutorAccount, getAllTutors} = require('../services/account-service');
 var mongoose = require('mongoose');
 const Account = require('../models/account');
 const Tutor = require('../models/tutor');
@@ -78,6 +78,12 @@ it('given login credentials, login() returns account', async () => {
     expect(await login('student@example.com', 'password')).toBeTruthy();
 })
 
+it('find all tutors, getAllTutors() returns all tutors', async () => {
+    const tutorsFound = await getAllTutors();
+    expect(tutorsFound).toBeTruthy();
+    
+})
+
 describe('login endpoint', () => {
     it('given login credentials, router.post("/login") should return status 200', async () => {
         // create an acount
@@ -124,6 +130,7 @@ describe('Register for an account', () => {
                             });
         expect(response.status).toBe(200);
     })
+   
 })
 
 afterAll((done) => {

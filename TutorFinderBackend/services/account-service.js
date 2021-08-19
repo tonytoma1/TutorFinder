@@ -14,7 +14,7 @@ async function createStudentAccount(email, password, firstName, lastName, subjec
         password: bcrypt.hashSync(password, 10),
         firstName: firstName,
         lastName: lastName,
-        accountType: savedStudent._id,
+        accountType: savedStudent.id,
         onModel: 'Student'
     });
 
@@ -33,7 +33,7 @@ async function createTutorAccount(email, password, firstName, lastName, subjects
         password: bcrypt.hashSync(password, 10),
         firstName: firstName,
         lastName: lastName,
-        accountType: savedTutor._id,
+        accountType: savedTutor.id,
         onModel: 'Tutor'
     });
 
@@ -57,4 +57,14 @@ async function login(email, password) {
 
 }
 
-module.exports = {login, createStudentAccount, createTutorAccount}
+async function getAllTutors() {
+    const tutors = await Account.find({onModel: 'Tutor'}).populate('accountType').select('-password');
+    
+    if(tutors == null) {
+        throw new Error({code: 'no_tutors_found'});
+    }
+
+    return tutors;
+}
+
+module.exports = {login, createStudentAccount, createTutorAccount, getAllTutors}
