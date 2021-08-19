@@ -3,16 +3,26 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {API_URL} from '@env';
 
-function TutorList () {
-    const [tutors, setTutors] = useState('');
+function TutorList ({navigation}) {
+    const [tutors, setTutors] = useState(new Array());
     const [loading, setLoading] = useState(true);
     
     useEffect(async () => {
+        try {
         const tutors = await loadAllTutors();
         setTutors(tutors.data.tutors);
-        setLoading(false);
-
+        }
+        catch(error) {
+        }
+        finally {
+            setLoading(false);
+        }
     },[])
+
+    
+    const loadUserProfile = async (profile) => {
+        navigation.navigate("Profile", {profile: profile});
+    }
 
     if(loading) {
         return (
@@ -20,11 +30,19 @@ function TutorList () {
         )
     }
 
+    if(tutors.length == 0) {
+        return (
+            <View>
+                <Text>No tutors to load at this time.</Text>
+            </View>
+        )
+    }
+
     return (
             <View style={styles.container}>
               <FlatList data={tutors} 
               renderItem={({item}) => 
-                        <TouchableOpacity style={styles.tutorContainer}>
+                        <TouchableOpacity style={styles.tutorContainer} onPress={() => loadUserProfile(item)}>
                             <View style={styles.image}>
                             <Image style={styles.profileImage} source={{uri: item.profilePicture}} />
                             </View>

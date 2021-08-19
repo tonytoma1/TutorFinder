@@ -1,9 +1,10 @@
 import 'react-native-gesture-handler';
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import NavigationBar from './components/NavigationBar';
 import Login from './pages/Login';
 import TutorList from './pages/TutorList';
+import Profile from './pages/Profile';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -21,14 +22,15 @@ const MainTabs = () => {
 }
 
 const App = () => {
-
+  const [signedIn, setSignedIn] = useState(false);
 
   return (
     <AuthenticationContextProvider>
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Home" component={Login} options={{headerShown: false}}/> 
-          <Stack.Screen name="Main" component={MainTabs}></Stack.Screen>
+          <Stack.Screen name="Main" component={MainTabs} />
+          <Stack.Screen name="Profile" component={Profile} />
         </Stack.Navigator>
       </NavigationContainer>  
     </AuthenticationContextProvider>
