@@ -15,8 +15,7 @@ const LoginPage = ({navigation, route}) => {
     const authentication = useAuthenticationContext();
 
     const loginButtonHandler = async () => {
-        let i = authentication
-            await login(email, password);
+        await login(email, password);
     }
 
     const login = async () => {
@@ -65,7 +64,6 @@ const styles = StyleSheet.create({
 
     input: {
         borderWidth: 1,
-        width: '80%',
         width: '80%',
         marginRight: 'auto',
         marginLeft: 'auto'

@@ -12,6 +12,8 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import {AuthenticationProvider} from './AuthenticationContext';
 import {API_URL} from '@env';
 import io from 'socket.io-client';
+import ConversationList from './pages/ConversationList';
+import PrivateChatLog from './pages/PrivateChatLog';
 
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialTopTabNavigator();
@@ -20,6 +22,7 @@ const MainTabs = () => {
   return (
     <Tab.Navigator>
         <Tab.Screen name="Tutor" component={TutorList} />
+        <Tab.Screen name="Conversations" component={ConversationList}/>
     </Tab.Navigator>
   )
 }
@@ -45,7 +48,8 @@ const App = () => {
           {signedIn ? (
           <> 
           <Stack.Screen name="Main" component={MainTabs} />
-          <Stack.Screen name="Profile" component={Profile} /> 
+          <Stack.Screen name="Profile" component={Profile} initialParams={{socket: socket}} /> 
+          <Stack.Screen name="PrivateChat" component={PrivateChatLog}/>
           </>) : 
           (<Stack.Screen name="Home" component={Login} options={{headerShown: false}} initialParams={{signedIn: signedIn, 
                                                                                                       setSignedIn: setSignedIn,
