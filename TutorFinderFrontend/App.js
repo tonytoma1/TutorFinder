@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import NavigationBar from './components/NavigationBar';
 import Login from './pages/Login';
@@ -9,7 +9,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import {AuthenticationContextProvider} from './context/AuthenticationContext';
+import {AuthenticationProvider} from './AuthenticationContext';
+import {API_URL} from '@env';
+import io from 'socket.io-client';
+
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 
@@ -23,17 +26,34 @@ const MainTabs = () => {
 
 const App = () => {
   const [signedIn, setSignedIn] = useState(false);
+  const [socket, setSocket] = useState(io(API_URL, {
+                                        autoConnect: false,
+                                        auth: {
+                                            username: null,
+                                            sessionId: null,
+                                            userId: null
+                                        }}));
+
+  useEffect(() => {
+
+  })
 
   return (
-    <AuthenticationContextProvider>
       <NavigationContainer>
+        <AuthenticationProvider>
         <Stack.Navigator>
-          <Stack.Screen name="Home" component={Login} options={{headerShown: false}}/> 
+          {signedIn ? (
+          <> 
           <Stack.Screen name="Main" component={MainTabs} />
-          <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen name="Profile" component={Profile} /> 
+          </>) : 
+          (<Stack.Screen name="Home" component={Login} options={{headerShown: false}} initialParams={{signedIn: signedIn, 
+                                                                                                      setSignedIn: setSignedIn,
+                                                                                                      socket: socket}}/> )
+          }
         </Stack.Navigator>
+        </AuthenticationProvider>
       </NavigationContainer>  
-    </AuthenticationContextProvider>
   );
 };
 

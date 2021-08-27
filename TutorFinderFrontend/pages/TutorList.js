@@ -2,10 +2,12 @@ import {View, Text,StyleSheet, Image, SafeAreaView, FlatList, TouchableOpacity} 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {API_URL} from '@env';
+import {useAuthenticationContext} from '../AuthenticationContext';
 
 function TutorList ({navigation}) {
     const [tutors, setTutors] = useState(new Array());
     const [loading, setLoading] = useState(true);
+    const authentication = useAuthenticationContext();
     
     useEffect(async () => {
         try {

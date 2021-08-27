@@ -21,6 +21,9 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
+// create socket connection
+const io = require('socket.io')(server)
+
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -88,3 +91,21 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+io.on('connection', (socket) => {
+  console.log('client connected');
+  // TODO load the user's private message and send those private messages to the user.
+
+  socket.join(socket.handshake.auth.username);
+  
+  socket.on('private_message', ({content, to}) => {
+    // send message to specified user
+    // Save message in the database.
+  })
+
+  socket.on('disconnecting', () => {
+    
+  })
+
+})
+
