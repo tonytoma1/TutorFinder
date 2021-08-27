@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     },
     chatLog: {
         flex: 2,
-        backgroundColor: 'blue'
+        backgroundColor: 'white'
     },
     chatInput: {
         width: '100%',
