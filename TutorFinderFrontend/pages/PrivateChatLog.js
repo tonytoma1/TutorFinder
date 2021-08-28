@@ -13,7 +13,7 @@ function PrivateChatLog({route}) {
         // This is the user the is currently logged in.
         let senderUsername = socket.auth.username;
         let recipientsEmail = [recipientUser.email, socket.auth.username]
-        // Get the messages that are only pertain to the recipient and to the user that is logged in.
+        // Get the private messages that only pertain to the recipient and to the user that is logged in.
         let messages = conversations.filter((chat) => {
             return (recipientsEmail.indexOf(chat.recipients[0].email) >= 0 && recipientsEmail.indexOf(chat.recipients[1].email) >= 0)
         })
