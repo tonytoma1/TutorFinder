@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('tutorfinderbackend:server');
 var http = require('http');
+var {getAllConversationsForUser} = require('../services/chat-service');
 
 /**
  * Get port from environment and store in Express.
@@ -92,9 +93,11 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
   console.log('client connected');
-  // TODO load the user's private message and send those private messages to the user.
+  // load the user's private message and send those private messages to the user.
+  let conversations = await getAllConversationsForUser(socket.handshake.auth.username);
+  socket.emit('conversations_list', conversations);
 
   socket.join(socket.handshake.auth.username);
   

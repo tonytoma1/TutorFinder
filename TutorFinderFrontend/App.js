@@ -18,15 +18,6 @@ import PrivateChatLog from './pages/PrivateChatLog';
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 
-const MainTabs = () => {
-  return (
-    <Tab.Navigator>
-        <Tab.Screen name="Tutor" component={TutorList} />
-        <Tab.Screen name="Conversations" component={ConversationList}/>
-    </Tab.Navigator>
-  )
-}
-
 const App = () => {
   const [signedIn, setSignedIn] = useState(false);
   const [socket, setSocket] = useState(io(API_URL, {
@@ -40,6 +31,15 @@ const App = () => {
   useEffect(() => {
 
   })
+
+  const MainTabs = () => {
+    return (
+      <Tab.Navigator>
+          <Tab.Screen name="Tutor" component={TutorList} />
+          <Tab.Screen name="Conversations" initialParams={{socket: socket}} component={ConversationList}/>
+      </Tab.Navigator>
+    )
+  }
 
   return (
       <NavigationContainer>
@@ -59,6 +59,7 @@ const App = () => {
         </AuthenticationProvider>
       </NavigationContainer>  
   );
+  
 };
 
 

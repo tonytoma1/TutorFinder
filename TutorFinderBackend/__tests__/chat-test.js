@@ -26,4 +26,10 @@ it("given a user's email, getAllConversationsForUser() should return conversatio
     let email = "registertutor1@example.com";
     let result = await getAllConversationsForUser(email);
     expect(result.length).not.toBe(0);
+    expect(result.length).toBe(1);
+
+    let noConversationEmail = "registertutor3@example.com";
+    let output = await getAllConversationsForUser(noConversationEmail);
+    expect(output.length).toBe(0);
 })
+

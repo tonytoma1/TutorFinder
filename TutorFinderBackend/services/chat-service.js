@@ -46,8 +46,27 @@ async function saveMessage(recipientEmail, senderEmail, message) {
  * @param {String} email - the user's email.
  */
 async function getAllConversationsForUser(email) {
-    const account = await Account.findOne({email: email});
-    const conversation = await Conversation.find({recipients: {$in: [mongoose.Types.ObjectId(account.id)]}})
+    let conversation = null;
+    try {
+        const account = await Account.findOne({email: email});
+        conversation = await Conversation.find({recipients: {$in: [mongoose.Types.ObjectId(account.id)]}})
+                                         .populate('recipients', '-password').populate({path: "messages",
+                                                                                        populate: {
+                                                                                            path: 'fromUser',
+                                                                                            model: 'Account',
+                                                                                            select: '-password'
+                                                                                        }
+                                                                                    })
+                                                                                    .populate({path: 'messages', 
+                                                                                              populate: {
+                                                                                                  path: 'toUser',
+                                                                                                  model: 'Account',
+                                                                                                  select: '-password'
+                                                                                              }});
+    }
+    catch(error) {
+
+    }
     return conversation;
 }
 
