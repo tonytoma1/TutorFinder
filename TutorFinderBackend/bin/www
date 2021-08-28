@@ -100,11 +100,6 @@ io.on('connection', async (socket) => {
   socket.emit('conversations_list', conversations);
 
   socket.join(socket.handshake.auth.username);
-  
-  socket.on('private_message', ({content, to}) => {
-    // send message to specified user
-    // Save message in the database.
-  })
 
   socket.on('disconnecting', () => {
     

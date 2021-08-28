@@ -11,8 +11,8 @@ function TutorList ({navigation}) {
     
     useEffect(async () => {
         try {
-        const tutors = await loadAllTutors();
-        setTutors(tutors.data.tutors);
+            const tutors = await loadAllTutors();
+            setTutors(tutors.data.tutors);
         }
         catch(error) {
         }

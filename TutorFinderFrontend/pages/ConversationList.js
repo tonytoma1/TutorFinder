@@ -2,16 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 
 function ConversationList({route, navigation}) {
-    const [conversations, setConversations] = useState([]);
+    const conversations = route.params.conversations;
     const socket = route.params.socket
 
     useEffect(() => {
-        socket.on('conversations_list', (userConversations) => {
-            setConversations(userConversations);
-        })
+     
     }, [socket, conversations])
 
-    const displayPrivateChat = (user) => {
+    const displayPrivateChat = (user, privateChat) => {
         navigation.navigate('PrivateChat', {user: user});
     }
 
@@ -27,7 +25,7 @@ function ConversationList({route, navigation}) {
                             as a recipient of the conversation. */
                             if(recipient.email != socket.auth.username) {
                                 return (
-                                    <TouchableOpacity onPress={() => displayPrivateChat(recipient)} >
+                                    <TouchableOpacity onPress={() => displayPrivateChat(recipient, element)} >
                                         <View style={styles.recipientContainer}>
                                             <Image style={styles.recipientImage} source={{uri: recipient.profilePicture}}/>
                                             <Text style={styles.recipientName}>{recipient.firstName} {recipient.lastName}</Text>

@@ -20,6 +20,7 @@ const Tab = createMaterialTopTabNavigator();
 
 const App = () => {
   const [signedIn, setSignedIn] = useState(false);
+  const [conversations, setConversations] = useState([]);
   const [socket, setSocket] = useState(io(API_URL, {
                                         autoConnect: false,
                                         auth: {
@@ -29,14 +30,17 @@ const App = () => {
                                         }}));
 
   useEffect(() => {
-
-  })
+     // Load all of the conversations the user has
+     socket.on('conversations_list', (userConversations) => {
+      setConversations(userConversations);
+    })
+  }, [socket])
 
   const MainTabs = () => {
     return (
       <Tab.Navigator>
           <Tab.Screen name="Tutor" component={TutorList} />
-          <Tab.Screen name="Conversations" initialParams={{socket: socket}} component={ConversationList}/>
+          <Tab.Screen name="Conversations" initialParams={{socket: socket, conversations: conversations}} component={ConversationList}/>
       </Tab.Navigator>
     )
   }
@@ -49,7 +53,7 @@ const App = () => {
           <> 
           <Stack.Screen name="Main" component={MainTabs} />
           <Stack.Screen name="Profile" component={Profile} initialParams={{socket: socket}} /> 
-          <Stack.Screen name="PrivateChat" component={PrivateChatLog}/>
+          <Stack.Screen name="PrivateChat" component={PrivateChatLog} initialParams={{socket: socket, conversations: conversations}}/>
           </>) : 
           (<Stack.Screen name="Home" component={Login} options={{headerShown: false}} initialParams={{signedIn: signedIn, 
                                                                                                       setSignedIn: setSignedIn,
