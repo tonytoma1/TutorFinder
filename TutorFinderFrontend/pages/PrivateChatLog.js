@@ -1,25 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect,useState, useRef } from 'react';
 import { TextInput } from 'react-native';
 import { ScrollView, Text, View, Image, StyleSheet, Button } from 'react-native';
+import {useConversationContext} from '../context/ConversationContext';
 
 function PrivateChatLog({route}) {
     const [chatLog, setChatLog] = useState([]);
+    const [chatMessage, setChatMessage] = useState([]);
+    const [senderEmail, setSenderEmail] = useState('');
     const socket = route.params.socket;
-    const conversations = route.params.conversations;
+    const [conversations, setConversations] = useConversationContext();
     // The user that is going to recieve the instant messages.
     const recipientUser = route.params.user;
+    const scrollViewRef = useRef();
+    
 
-    useState(() => {
-        // This is the user the is currently logged in.
-        let senderUsername = socket.auth.username;
+    useEffect(() => {
+        // This is the user that is currently logged in.
+        setSenderEmail(socket.auth.username);
         let recipientsEmail = [recipientUser.email, socket.auth.username]
         // Get the private messages that only pertain to the recipient and to the user that is logged in.
-        let messages = conversations.filter((chat) => {
+        let messagesFound = conversations.filter((chat) => {
             return (recipientsEmail.indexOf(chat.recipients[0].email) >= 0 && recipientsEmail.indexOf(chat.recipients[1].email) >= 0)
         })
-        setChatLog(messages)
+        setChatLog(messagesFound)
 
-    }, [chatLog, socket, conversations])
+    }, [conversations])
+
+
+    const sendPrivateMessage = () => {
+        let messageContent = {
+            recipientEmail: recipientUser.email,
+            senderEmail: senderEmail,
+            message: chatMessage
+        }
+        
+        socket.emit('message_sent', messageContent);
+    }
+
 
     return(
         <View style={styles.entireChatContainer}>
@@ -27,18 +44,28 @@ function PrivateChatLog({route}) {
                 <Image style={styles.profilePicture}source={{uri: recipientUser.profilePicture}}/>
                 <Text>{recipientUser.firstName} {recipientUser.lastName}</Text>
             </View>
-            <ScrollView style={styles.chatLog}>
+            <ScrollView style={styles.chatLog} ref={scrollViewRef} onContentSizeChange={(width, height) => {
+                    scrollViewRef.current.scrollToEnd({animated: true});
+            }}>
                 {chatLog.map((element, index) => {
-                    return (
-                        <View key={index}>
-
-                        </View>
-                    )
+                    {
+                        return (
+                            element.messages.map((singleMessage, i) => {
+                                return (
+                                    <View key={i}>
+                                        <Image source={{ uri: singleMessage.fromUser.profilePicture }} />
+                                        <Text>{singleMessage.date}</Text>
+                                        <Text>{singleMessage.message}</Text>
+                                    </View>
+                                )
+                            })
+                        )
+                    }
                 })}
             </ScrollView>
             <View style={styles.sendChatContainer}>
-                <TextInput style={styles.chatInput}/>
-                <Button title="Send" style={styles.chatButton}/>
+                <TextInput style={styles.chatInput} onChangeText={setChatMessage}/>
+                <Button title="Send" style={styles.chatButton} onPress={() => sendPrivateMessage()} />
             </View>
         </View>
     )

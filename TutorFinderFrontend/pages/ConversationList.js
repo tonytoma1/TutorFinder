@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {useConversationContext} from '../context/ConversationContext';
 
 function ConversationList({route, navigation}) {
-    const conversations = route.params.conversations;
+    const [conversations, setConversations] = useConversationContext();
     const socket = route.params.socket
 
     useEffect(() => {
      
-    }, [socket, conversations])
+    }, [conversations])
 
     const displayPrivateChat = (user, privateChat) => {
         navigation.navigate('PrivateChat', {user: user});

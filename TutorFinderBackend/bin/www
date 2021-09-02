@@ -7,7 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('tutorfinderbackend:server');
 var http = require('http');
-var {getAllConversationsForUser} = require('../services/chat-service');
+var {getAllConversationsForUser, saveMessage} = require('../services/chat-service');
 
 /**
  * Get port from environment and store in Express.
@@ -101,6 +101,13 @@ io.on('connection', async (socket) => {
 
   socket.join(socket.handshake.auth.username);
 
+  socket.on('message_sent', async (messageContent) => {
+    // Persist message to the database
+    await saveMessage(messageContent.recipientEmail, messageContent.senderEmail, messageContent.message);
+    // emit message to the other user
+    let persistedConversations = await getAllConversationsForUser(messageContent.recipientEmail);
+    socket.to(messageContent.recipientEmail).emit("message_received", persistedConversations);
+  })
   socket.on('disconnecting', () => {
     
   })
