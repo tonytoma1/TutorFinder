@@ -106,7 +106,7 @@ io.on('connection', async (socket) => {
     await saveMessage(messageContent.recipientEmail, messageContent.senderEmail, messageContent.message);
     // emit message to the other user
     let persistedConversations = await getAllConversationsForUser(messageContent.recipientEmail);
-    socket.to(messageContent.recipientEmail).emit("message_received", persistedConversations);
+    io.to(messageContent.recipientEmail).to(messageContent.senderEmail).emit("message_received", persistedConversations);
   })
   socket.on('disconnecting', () => {
     

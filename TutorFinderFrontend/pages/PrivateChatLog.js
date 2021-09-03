@@ -1,17 +1,22 @@
 import React, { useEffect,useState, useRef } from 'react';
 import { TextInput } from 'react-native';
-import { ScrollView, Text, View, Image, StyleSheet, Button } from 'react-native';
+import { ScrollView, Text, View, Image, StyleSheet, Button, Keyboard,KeyboardAvoidingView } from 'react-native';
 import {useConversationContext} from '../context/ConversationContext';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview'
+import {Header} from '@react-navigation/stack'
+import { FlatList } from 'react-native-gesture-handler';
 
 function PrivateChatLog({route}) {
     const [chatLog, setChatLog] = useState([]);
     const [chatMessage, setChatMessage] = useState([]);
     const [senderEmail, setSenderEmail] = useState('');
+    const [refresh, setRefresh] = useState(false);
     const socket = route.params.socket;
     const [conversations, setConversations] = useConversationContext();
     // The user that is going to recieve the instant messages.
     const recipientUser = route.params.user;
-    const scrollViewRef = useRef();
+    const flatListRef = useRef();
+    const textInputRef = useRef();
     
 
     useEffect(() => {
@@ -23,6 +28,7 @@ function PrivateChatLog({route}) {
             return (recipientsEmail.indexOf(chat.recipients[0].email) >= 0 && recipientsEmail.indexOf(chat.recipients[1].email) >= 0)
         })
         setChatLog(messagesFound)
+        setRefresh(!refresh);
 
     }, [conversations])
 
@@ -33,41 +39,45 @@ function PrivateChatLog({route}) {
             senderEmail: senderEmail,
             message: chatMessage
         }
-        
+
+        setChatMessage('');        
         socket.emit('message_sent', messageContent);
+    }
+
+    const displayChat = ({item}) => {
+        return (
+            item.messages.map((element, index) => {
+                return(
+                    <View key={element._id}>
+                        <Image source={{ uri: element.fromUser.profilePicture }} />
+                        <Text>{element.date}</Text>
+                        <Text>{element.message}</Text>
+                    </View>
+                )
+            })
+        )
     }
 
 
     return(
-        <View style={styles.entireChatContainer}>
+        <KeyboardAvoidingView style={styles.entireChatContainer} behavior="padding"
+        keyboardVerticalOffset={-500}>
             <View style={styles.profileContainer}>
                 <Image style={styles.profilePicture}source={{uri: recipientUser.profilePicture}}/>
                 <Text>{recipientUser.firstName} {recipientUser.lastName}</Text>
             </View>
-            <ScrollView style={styles.chatLog} ref={scrollViewRef} onContentSizeChange={(width, height) => {
-                    scrollViewRef.current.scrollToEnd({animated: true});
-            }}>
-                {chatLog.map((element, index) => {
-                    {
-                        return (
-                            element.messages.map((singleMessage, i) => {
-                                return (
-                                    <View key={i}>
-                                        <Image source={{ uri: singleMessage.fromUser.profilePicture }} />
-                                        <Text>{singleMessage.date}</Text>
-                                        <Text>{singleMessage.message}</Text>
-                                    </View>
-                                )
-                            })
-                        )
-                    }
-                })}
-            </ScrollView>
+
+            <FlatList style={styles.chatLog} data={chatLog} renderItem={displayChat} 
+                      extraData={refresh} ref={flatListRef}
+                      onContentSizeChange={() => flatListRef.current.scrollToEnd({animated: false})}
+                      onLayout={() => flatListRef.current.scrollToEnd({animated: false})}/>
+
             <View style={styles.sendChatContainer}>
-                <TextInput style={styles.chatInput} onChangeText={setChatMessage}/>
-                <Button title="Send" style={styles.chatButton} onPress={() => sendPrivateMessage()} />
-            </View>
-        </View>
+                    <TextInput style={styles.chatInput} onChangeText={setChatMessage} value={chatMessage}
+                    ref={textInputRef}/>
+                    <Button title="Send" style={styles.chatButton} onPress={() => sendPrivateMessage()} />
+            </View>            
+        </KeyboardAvoidingView>
     )
 }
 
@@ -84,7 +94,6 @@ const styles = StyleSheet.create({
         borderRadius: 100
     },
     chatLog: {
-        flex: 2,
         backgroundColor: 'white'
     },
     chatInput: {
