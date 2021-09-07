@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('tutorfinderbackend:server');
 var http = require('http');
+var {getAllConversationsForUser, saveMessage} = require('../services/chat-service');
 
 /**
  * Get port from environment and store in Express.
@@ -20,6 +21,9 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+// create socket connection
+const io = require('socket.io')(server)
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -88,3 +92,25 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+io.on('connection', async (socket) => {
+  console.log('client connected');
+  // load the user's private message and send those private messages to the user.
+  let conversations = await getAllConversationsForUser(socket.handshake.auth.username);
+  socket.emit('conversations_list', conversations);
+
+  socket.join(socket.handshake.auth.username);
+
+  socket.on('message_sent', async (messageContent) => {
+    // Persist message to the database
+    await saveMessage(messageContent.recipientEmail, messageContent.senderEmail, messageContent.message);
+    // emit message to the other user
+    let persistedConversations = await getAllConversationsForUser(messageContent.recipientEmail);
+    io.to(messageContent.recipientEmail).to(messageContent.senderEmail).emit("message_received", persistedConversations);
+  })
+  socket.on('disconnecting', () => {
+    
+  })
+
+})
+

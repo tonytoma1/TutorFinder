@@ -4,18 +4,37 @@ import React from 'react';
 import {useState} from 'react'
 import axios from 'axios';
 import { API_URL } from  "@env";
-import {useAuthenticationContext} from '../context/AuthenticationContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CookieManager from '@react-native-cookies/cookies';
+import {useAuthenticationContext} from '../AuthenticationContext';
 
-const LoginPage = ({navigation}) => {
+
+const LoginPage = ({navigation, route}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const {state, dispatch} = useAuthenticationContext();
-
+    const authentication = useAuthenticationContext();
 
     const loginButtonHandler = async () => {
-            await login(email, password, navigation, dispatch);
+        await login(email, password);
+    }
+
+    const login = async () => {
+        try {
+            const loginUrl = API_URL + 'api/account/login';
+            const data = {email: email, password: password};
+            let loginResponse = await axios.post(loginUrl, data);
+            let cookies = await CookieManager.get(API_URL);
+            authentication.refreshToken = cookies.refresh_token.value;
+            authentication.accessToken = cookies.access_token.value;
+            await AsyncStorage.setItem('tutor_app_refresh_token', authentication.refreshToken);
+            await AsyncStorage.setItem('tutor_app_access_token', authentication.accessToken);
+            route.params.socket.auth.username = email;
+            route.params.socket.connect();
+            route.params.setSignedIn(true);
+        }
+        catch(error) {
+            console.debug(error);
+        }
     }
 
     return(
@@ -34,25 +53,6 @@ const LoginPage = ({navigation}) => {
 }
 
 
-const login = async (email, password, navigation, dispatch) => {
-    try {
-        const loginUrl = API_URL + 'api/account/login';
-        const data = {email: email, password: password};
-        let loginResponse = await axios.post(loginUrl, data);
-        let cookies = await CookieManager.get(API_URL);
-        dispatch({type: 'refresh_token', payload: cookies.refresh_token.value})
-        dispatch({type: 'access_token', payload: cookies.access_token.value});
-        navigation.navigate('Main');
-
-    }
-    catch(error) {
-        console.debug(error);
-     
-    }
-    
-}
-
-
 
 const styles = StyleSheet.create({
     wrapper: {
@@ -64,7 +64,6 @@ const styles = StyleSheet.create({
 
     input: {
         borderWidth: 1,
-        width: '80%',
         width: '80%',
         marginRight: 'auto',
         marginLeft: 'auto'

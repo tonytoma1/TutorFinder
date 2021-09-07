@@ -6,6 +6,13 @@ import {View, Text,StyleSheet, Image, SafeAreaView, FlatList, TouchableOpacity} 
 
 function Profile({route, navigation}) {
     const user = route.params.profile;
+    const socket = route.params.socket;
+
+    const startChat = (user) => {
+        let recipient = user;
+        let sender = socket.auth.username;
+        navigation.navigate("PrivateChat", {user: user})
+    }
 
     return(
             <View style={styles.container}>
@@ -31,7 +38,8 @@ function Profile({route, navigation}) {
                         })}
                         </View>
                         <Text>{user.email}</Text>
-                        <Pressable><Text>Message {user.firstName}</Text></Pressable>
+                        <Pressable style={styles.startChatButton} onPress={() => startChat(user)}
+                        ><Text>Message {user.firstName}</Text></Pressable>
                     </View> 
                 </View>
 
@@ -68,6 +76,11 @@ const styles = StyleSheet.create({
     },
     subject: {
         flexWrap: "wrap"
+    },
+    startChatButton: {
+        backgroundColor: 'gray',
+        marginLeft: 10,
+        marginTop: 10
     }
 })
 
