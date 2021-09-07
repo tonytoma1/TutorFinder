@@ -30,6 +30,12 @@ function ConversationList({route, navigation}) {
                                         <View style={styles.recipientContainer}>
                                             <Image style={styles.recipientImage} source={{uri: recipient.profilePicture}}/>
                                             <Text style={styles.recipientName}>{recipient.firstName} {recipient.lastName}</Text>
+                                            {/* 
+                                                  {element.messages[element.messages.length - 1].fromUser.email == socket.auth.username ?
+                                             <Text>(you)</Text> : <Text>{element.messages[element.messages.length - 1].fromUser.firstName}</Text>}
+                                            <Text>{element.messages[element.messages.length - 1].message}</Text>
+                                            
+                                            */}
                                         </View>
                                     </TouchableOpacity>
                                 )

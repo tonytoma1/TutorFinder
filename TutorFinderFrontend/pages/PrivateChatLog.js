@@ -48,16 +48,26 @@ function PrivateChatLog({route}) {
         return (
             item.messages.map((element, index) => {
                 return(
-                    <View key={element._id}>
-                        <Image source={{ uri: element.fromUser.profilePicture }} />
-                        <Text>{element.date}</Text>
-                        <Text>{element.message}</Text>
+                
+                    <View style={styles.chatBubble} key={element._id}>
+                        <View style={styles.profilePictureContainer}>
+                        {element.fromUser.email != socket.auth.username  ? <Image style={styles.profilePicture} source={{ uri: element.fromUser.profilePicture }} /> : <Image />}
+                        </View>
+                        <View style={styles.chatContainer}>
+                            <View style={styles.chatWrapper}>
+                                <Text style={[styles.chatDate, element.fromUser.email != socket.auth.username ? styles.leftChatAlign : styles.rightChatAlign ]}>
+                                  {element.date}
+                                </Text>
+                                <Text style={[styles.chatMessage, element.fromUser.email != socket.auth.username ? styles.leftChatAlign : styles.rightChatAlign ]}>
+                                  {element.message}
+                                </Text>
+                            </View>
+                        </View>                    
                     </View>
                 )
             })
         )
     }
-
 
     return(
         <KeyboardAvoidingView style={styles.entireChatContainer} behavior="padding"
@@ -67,34 +77,33 @@ function PrivateChatLog({route}) {
                 <Text>{recipientUser.firstName} {recipientUser.lastName}</Text>
             </View>
 
-            <FlatList style={styles.chatLog} data={chatLog} renderItem={displayChat} 
-                      extraData={refresh} ref={flatListRef}
-                      onContentSizeChange={() => flatListRef.current.scrollToEnd({animated: false})}
-                      onLayout={() => flatListRef.current.scrollToEnd({animated: false})}/>
+            <FlatList style={styles.chatLog} data={chatLog} renderItem={displayChat} key="list"
+            extraData={refresh} ref={flatListRef}
+            onContentSizeChange={() => flatListRef.current.scrollToEnd({animated: false})}
+            onLayout={() => flatListRef.current.scrollToEnd({animated: false})}/>
 
             <View style={styles.sendChatContainer}>
                     <TextInput style={styles.chatInput} onChangeText={setChatMessage} value={chatMessage}
-                    ref={textInputRef}/>
+                    ref={textInputRef}  key={"message"} />
                     <Button title="Send" style={styles.chatButton} onPress={() => sendPrivateMessage()} />
             </View>            
         </KeyboardAvoidingView>
     )
 }
 
+
 const styles = StyleSheet.create({
     entireChatContainer: {
-        flex: 1
+        flex: 1,
+        width: '100%'
     },
     profileContainer: {
         flexDirection: "row"
     },
-    profilePicture: {
-        height: 60,
-        width: 60,
-        borderRadius: 100
-    },
     chatLog: {
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        width: '100%',
+        flex: 1
     },
     chatInput: {
         width: '100%',
@@ -109,7 +118,49 @@ const styles = StyleSheet.create({
     chatButton: {
         flexDirection: 'column',
         flex: 1
+    },
+    otherUser: {
+
+    },
+    /*Chat message styles */
+    chatBubble: {
+        flex: 1,
+        marginBottom: 15,
+        width: '100%',
+        flexDirection: 'row'
+    
+    },
+    profilePicture: {
+        height: 40,
+        width: 40,
+        borderRadius: 100,
+    },
+    profilePictureContainer: {
+        flexDirection: 'column',
+        width: '10%'
+    },
+    chatContainer: {
+        flexDirection: 'column',
+        width: '90%'
+        
+    },
+    chatDate: {
+    },
+    chatMessage: {        
+
+    },    
+    rightChatAlign: {
+        textAlign: 'right',
+        alignContent: 'flex-end'
+
+    }, 
+    leftChatAlign: {
+
+    },
+    chatWrapper: {
+        
     }
+
 })
 
 
