@@ -12,7 +12,7 @@ Database: MongoDB
 
 Instant messaging was created with socket.io
 
-![Screenshot](https://res.cloudinary.com/realtor/image/upload/v1630973377/Convo_pp1nhm.png)
+![Screenshot](https://res.cloudinary.com/realtor/image/upload/v1631039971/css_bmklhk.png)
 
 # View Available tutors
 
@@ -26,4 +26,4 @@ Data is pulled from MongoDB
 
 
 # Final Design Target
-![Screenshot](https://res.cloudinary.com/realtor/image/upload/v1630973823/figma_crwish.png)
+![Screenshot](https://res.cloudinary.com/realtor/image/upload/v1631039970/figma_nu59hu.png)
