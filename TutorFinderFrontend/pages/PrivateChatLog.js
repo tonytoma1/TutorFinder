@@ -48,21 +48,34 @@ function PrivateChatLog({route}) {
         return (
             item.messages.map((element, index) => {
                 return(
-                
                     <View style={styles.chatBubble} key={element._id}>
                         <View style={styles.profilePictureContainer}>
-                        {element.fromUser.email != socket.auth.username  ? <Image style={styles.profilePicture} source={{ uri: element.fromUser.profilePicture }} /> : <Image />}
+                            {element.fromUser.email != socket.auth.username ? <Image style={styles.profilePicture} source={{ uri: element.fromUser.profilePicture }} /> : <Image />}
                         </View>
                         <View style={styles.chatContainer}>
-                            <View style={styles.chatWrapper}>
-                                <Text style={[styles.chatDate, element.fromUser.email != socket.auth.username ? styles.leftChatAlign : styles.rightChatAlign ]}>
-                                  {element.date}
-                                </Text>
-                                <Text style={[styles.chatMessage, element.fromUser.email != socket.auth.username ? styles.leftChatAlign : styles.rightChatAlign ]}>
-                                  {element.message}
-                                </Text>
+                            <View style={styles.dateContainer}>
+                                <View style={styles.leftChat}>
+                                    {element.fromUser.email == socket.auth.username ? <Text></Text> : <Text>{element.date}</Text>}
+                                </View>
+                                <View style={styles.rightChat}>
+                                    {element.fromUser.email == socket.auth.username ? <Text>{element.date}</Text> : <Text></Text>}
+                                </View>
                             </View>
-                        </View>                    
+                            <View style={styles.messageContainer}>
+                                {/*
+                                    If the fromUser is from the user that is currently logged in,
+                                    then display the message on the right column. Otherwise,
+                                    the message was sent from the other person, so display the message
+                                    on the left column.
+                                */}
+                                    <View style={styles.leftChat}>
+                                        {element.fromUser.email != socket.auth.username ? <Text style={[styles.rightChatContent, styles.chatContent]}>{element.message}</Text> : <Text></Text>}
+                                    </View>
+                                    <View style={styles.rightChat}>
+                                        {element.fromUser.email == socket.auth.username ? <Text style={[styles.leftChatContent, styles.chatContent]}>{element.message}</Text> : <Text></Text>}
+                                    </View>
+                            </View>
+                        </View>
                     </View>
                 )
             })
@@ -117,7 +130,7 @@ const styles = StyleSheet.create({
     },
     chatButton: {
         flexDirection: 'column',
-        flex: 1
+        flex: 1,
     },
     otherUser: {
 
@@ -144,23 +157,47 @@ const styles = StyleSheet.create({
         width: '90%'
         
     },
-    chatDate: {
-    },
     chatMessage: {        
-
-    },    
-    rightChatAlign: {
-        textAlign: 'right',
-        alignContent: 'flex-end'
-
-    }, 
-    leftChatAlign: {
-
+        backgroundColor: 'blue',
+        paddingLeft: 10,
+        paddingBottom: 5,
+        paddingTop: 5,
+        color: 'white',
+        borderRadius: 10,
     },
-    chatWrapper: {
+    dateContainer: {
+        flexDirection: 'row'
+    },
+    messageContainer: {
+        flexDirection: 'row'
+    },
+    leftChat: {
+        flexDirection: 'column',
+        width: '50%'
+    },
+    rightChat: {
+        flexDirection: 'column',
+        width: '50%',
+    },
+    leftChatContent: {
+        textAlign: 'left',
+        backgroundColor: '#A9A9A9'
+    },
+    rightChatContent: {
+        textAlign: 'left',
+        backgroundColor: '#11C281'
+    },
+    chatContent: {
+        paddingTop: 5,
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingBottom: 3,
+        borderRadius: 10,
+        color: 'white',
+        fontSize: 15
         
     }
-
+   
 })
 
 
