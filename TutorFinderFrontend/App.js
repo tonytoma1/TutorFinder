@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import NavigationBar from './components/NavigationBar';
+import Header from './components/Header';
 import Login from './pages/Login';
 import TutorList from './pages/TutorList';
 import Profile from './pages/Profile';
@@ -56,7 +56,7 @@ const App = () => {
           <Stack.Navigator>
             {signedIn ? (
               <>
-                <Stack.Screen name="Main" component={MainTabs} />
+                <Stack.Screen name="Main" component={MainTabs} options={{headerLeft: props => <Header/>, title: ''}}/>
                 <Stack.Screen name="Profile" component={Profile} initialParams={{ socket: socket }} />
                 <Stack.Screen name="PrivateChat" component={PrivateChatLog} initialParams={{ socket: socket}} />
               </>) :

@@ -1,4 +1,4 @@
-import NavigationBar from '../components/NavigationBar';
+import NavigationBar from '../components/Header';
 import {View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {useState} from 'react'

@@ -53,8 +53,6 @@ function TutorList ({navigation}) {
                                 <Text style={styles.name, styles.name}>{item.firstName} {item.lastName}</Text>
                                 {item.accountType.jobTitle != null ? <Text>{item.accountType.jobTitle}</Text> : null }
                                 <Text>{item.email}</Text>
-                                <Text>${item.accountType.price}/hr</Text>
-                                <Text>Subjects</Text>
                                 <View style={styles.subjectsContainer}>
                                     {item.accountType.subjects.map((element, index) => {
                                         return (
@@ -62,6 +60,8 @@ function TutorList ({navigation}) {
                                         )
                                     })} 
                                 </View>
+                                <Text style={styles.tutorPrice}>${item.accountType.price}/hr</Text>
+
                             </View>
                         </TouchableOpacity>
                 }
@@ -83,7 +83,13 @@ const styles = StyleSheet.create({
     },
     tutorContainer: {
         flexDirection: 'row',
-        marginBottom: 20
+        marginBottom: 0,
+        borderBottomWidth: 1,
+        borderLeftWidth: 2,
+        borderRightWidth: 2,
+        borderColor: '#11C281',
+        paddingBottom: 15,
+        paddingTop: 15,
     },
     image: {
         flexDirection: 'column',
@@ -92,23 +98,41 @@ const styles = StyleSheet.create({
     },
     profileImage: {
         borderRadius: 30,
-        height: 100,
-        width: 100
+        height: 90,
+        width: 90,
+        marginRight: 10
     },
     tutorInfo: {
         flexDirection: 'column',
         marginLeft: 10,
-        marginTop: 10
+        marginTop: 10,
+        fontFamily: 'Montserrat',
+
     },
     subjectsContainer: {
         flexDirection: 'row'
     },
     subject: {
-        marginLeft: 10
+        marginRight: 10,
+        borderWidth: 1,
+        paddingLeft: 10,
+        paddingRight: 10,
+        borderRadius: 10,
+        borderColor: '#11C281',
+        marginTop: 5,
+        marginBottom: 5,
+        fontFamily: 'Montserrat',
+
     },
     name: {
         fontSize: 20,
-        fontFamily: 'Montserrat'
+        fontFamily: 'Montserrat',
+
+    },
+    tutorPrice: {
+        fontSize: 16,
+        fontFamily: 'Montserrat',
+
     }
     
 })
