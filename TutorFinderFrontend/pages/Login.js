@@ -1,5 +1,5 @@
 import NavigationBar from '../components/Header';
-import {View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, TextInput, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import React from 'react';
 import {useState} from 'react'
 import axios from 'axios';
@@ -7,6 +7,7 @@ import { API_URL } from  "@env";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CookieManager from '@react-native-cookies/cookies';
 import {useAuthenticationContext} from '../AuthenticationContext';
+import Logo from '../components/Header';
 
 
 const LoginPage = ({navigation, route}) => {
@@ -39,15 +40,14 @@ const LoginPage = ({navigation, route}) => {
 
     return(
         <View style={styles.wrapper}>
-            <View style={styles.loginContainer}>
-                <Text style={styles.label}>Email</Text>
-                <TextInput style={styles.input} onChangeText={setEmail} value={email}/>
-                <Text style={styles.label}>Password</Text>
-                <TextInput secureTextEntry={true} style={styles.input} onChangeText={setPassword} value={password}/>
-                <TouchableOpacity title="Sign In" style={styles.button} onPress={loginButtonHandler}>
-                    <Text style={styles.buttonText}>Sign In</Text>
-                </TouchableOpacity>
-            </View>
+            <Image style={styles.logo} source={require('../images/logo-large.png')} />
+            <Text style={styles.label}>Email</Text>
+            <TextInput style={styles.input} onChangeText={setEmail} value={email} />
+            <Text style={styles.label}>Password</Text>
+            <TextInput secureTextEntry={true} style={styles.input} onChangeText={setPassword} value={password} />
+            <TouchableOpacity title="Sign In" style={styles.button} onPress={loginButtonHandler}>
+                <Text style={styles.buttonText}>Sign In</Text>
+            </TouchableOpacity>
         </View>
     )
 }
@@ -57,45 +57,41 @@ const LoginPage = ({navigation, route}) => {
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
-        flexDirection: "column",
-        justifyContent: 'center'
-       
     },
-
-    input: {
-        borderWidth: 1,
+    label: {
         width: '80%',
         marginRight: 'auto',
         marginLeft: 'auto'
     },
-
-    label: {
-        marginRight: 'auto',
+    logo: {
         marginLeft: 'auto',
-        width: '80%',
-        marginTop: 20
-    },
-
-    button: {
-        width: '80%',
-        height: 50,
+        marginRight: 'auto',
+        width: 200,
+        height: 200
+    },  
+    input: {
         borderWidth: 1,
         borderColor: '#11C281',
+        width: '80%',
+        marginRight: 'auto',
+        marginLeft: 'auto',
+        marginBottom: 20
+    },
+    button: {
+        width: '80%',
+        borderWidth: 1,
         marginLeft: 'auto',
         marginRight: 'auto',
-        marginTop: 20
+        marginTop: 10,
+        borderColor: '#11C281',
+        backgroundColor: '#11C281',
+        padding: 10,
     },
-
     buttonText: {
         textAlign: 'center',
-        marginTop: 'auto',
-        marginBottom: 'auto',
-        color: 'black',
-        fontWeight: 'bold'     
-    },
-
-    
-  
+        color: 'white'
+    }
+ 
 })
 
 export default LoginPage;
