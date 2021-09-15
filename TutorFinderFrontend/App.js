@@ -60,7 +60,7 @@ const App = () => {
           <Stack.Navigator>
             {signedIn ? (
               <>
-                <Stack.Screen name="Main" component={MainTabs} options={{headerLeft: props => <Header/>, title: ''}}/>
+                <Stack.Screen name="Main" component={MainTabs} options={{headerShown: false}}/>
                 <Stack.Screen name="Profile" component={Profile} initialParams={{ socket: socket }} />
                 <Stack.Screen name="PrivateChat" component={PrivateChatLog} initialParams={{ socket: socket}} />
               </>) :

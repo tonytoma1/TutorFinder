@@ -26,16 +26,15 @@ function ConversationList({route, navigation}) {
                             as a recipient of the conversation. */
                             if(recipient.email != socket.auth.username) {
                                 return (
-                                    <TouchableOpacity onPress={() => displayPrivateChat(recipient, element)} >
+                                    <TouchableOpacity style={styles.conversationButton} onPress={() => displayPrivateChat(recipient, element)} >
                                         <View style={styles.recipientContainer}>
                                             <Image style={styles.recipientImage} source={{uri: recipient.profilePicture}}/>
                                             <Text style={styles.recipientName}>{recipient.firstName} {recipient.lastName}</Text>
-                                            {/* 
-                                                  {element.messages[element.messages.length - 1].fromUser.email == socket.auth.username ?
-                                             <Text>(you)</Text> : <Text>{element.messages[element.messages.length - 1].fromUser.firstName}</Text>}
-                                            <Text>{element.messages[element.messages.length - 1].message}</Text>
-                                            
-                                            */}
+                                        </View>
+                                        <View style={styles.latestMessage}>
+                                            {element.messages[element.messages.length - 1].fromUser.email == socket.auth.username ?
+                                             <Text >(you): </Text> : <Text>{element.messages[element.messages.length - 1].fromUser.firstName}</Text>}
+                                            <Text >{element.messages[element.messages.length - 1].message} </Text>
                                         </View>
                                     </TouchableOpacity>
                                 )
@@ -60,7 +59,6 @@ const styles = StyleSheet.create({
     recipientContainer: {
         flexDirection: "row",
         borderBottomColor: 'black',
-        borderBottomWidth: 1
     },
     recipientImage: {
         width: 80,
@@ -71,6 +69,14 @@ const styles = StyleSheet.create({
         textAlignVertical: 'center',
         marginLeft: 10,
         fontSize: 25
+    },
+    latestMessage: {
+        flexDirection: 'row',
+        alignContent: 'center'
+    },
+    conversationButton: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#11C281'
     }
 
 })
