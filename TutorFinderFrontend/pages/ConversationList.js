@@ -28,13 +28,21 @@ function ConversationList({route, navigation}) {
                                 return (
                                     <TouchableOpacity style={styles.conversationButton} onPress={() => displayPrivateChat(recipient, element)} >
                                         <View style={styles.recipientContainer}>
-                                            <Image style={styles.recipientImage} source={{uri: recipient.profilePicture}}/>
-                                            <Text style={styles.recipientName}>{recipient.firstName} {recipient.lastName}</Text>
+                                            <View style={styles.col}>
+                                                <Image style={styles.recipientImage} source={{uri: recipient.profilePicture}}/>
+                                            </View>
+                                            <View style={[styles.col, styles.messageContent]}>
+                                                <Text style={styles.recipientName}>{recipient.firstName} {recipient.lastName}</Text>
+                                                <Text style={styles.messageBox}>
+                                                    {element.messages[element.messages.length - 1].fromUser.email == socket.auth.username ?
+                                                    <Text >(you): </Text> : <Text>{element.messages[element.messages.length - 1].fromUser.firstName}</Text>}
+                                                    <Text >{element.messages[element.messages.length - 1].message} </Text>                 
+                                                </Text>
+                                            </View>
+                                                                                     
                                         </View>
                                         <View style={styles.latestMessage}>
-                                            {element.messages[element.messages.length - 1].fromUser.email == socket.auth.username ?
-                                             <Text >(you): </Text> : <Text>{element.messages[element.messages.length - 1].fromUser.firstName}</Text>}
-                                            <Text >{element.messages[element.messages.length - 1].message} </Text>
+                                          
                                         </View>
                                     </TouchableOpacity>
                                 )
@@ -76,7 +84,19 @@ const styles = StyleSheet.create({
     },
     conversationButton: {
         borderBottomWidth: 1,
-        borderBottomColor: '#11C281'
+        borderBottomColor: '#11C281',
+        paddingBottom: 10,
+        paddingTop: 10,
+        paddingLeft: 10
+    },
+    col: {
+        flexDirection: 'column'
+    },
+    messageContent: {
+        marginTop: 10
+    },
+    messageBox: {
+        marginLeft: 10
     }
 
 })

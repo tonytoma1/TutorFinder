@@ -7,25 +7,33 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Slider from '@react-native-community/slider';
 import SideMenu from 'react-native-side-menu'
 import { ScrollView } from 'react-native-gesture-handler';
-import RangeSlider from 'rn-range-slider';
-import Thumb from './slider/Thumb'
-import Rail from './slider/Rail'
-import RailSelected from './slider/RailSelected';
+import {useAccountContext} from '../context/AccountContext';
 
 
-function TutorList ({navigation}) {
+function TutorList ({route, navigation}) {
     const [tutors, setTutors] = useState(new Array());
     const [filteredTutorList, setFilteredTutorList] = useState(new Array());
     const [loading, setLoading] = useState(true);
     const [currentPrice, setCurrentPrice] = useState(40);
     const [showFilters, setShowFilters] = useState(false);
-    const authentication = useAuthenticationContext();
+    const [account, setAccount] = useAccountContext();
     
+    const TUTOR = 'Tutor';
+
     useEffect(async () => {
         try {
             const tutors = await loadAllTutors();
             setTutors(tutors.data.tutors);
-            setFilteredTutorList(tutors.data.tutors);
+
+            // If the person that is logged in is a tutor, then remove them from the tutor
+            // list so he can't see himself. 
+            if(account.onModel = TUTOR) {
+                setFilteredTutorList(removeLoggedInTutor(tutors.data.tutors));
+            }
+            else {
+                setFilteredTutorList(tutors.data.tutors);
+            }
+            
         }
         catch(error) {
         }
@@ -44,8 +52,13 @@ function TutorList ({navigation}) {
     }
 
     const filterList = () => {
-        let list = tutors.filter((element) => element.accountType.price <= currentPrice)
+        let list = tutors.filter((element) => element.accountType.price <= currentPrice && element.email != account.email);
         setFilteredTutorList(list);
+    }
+
+    const removeLoggedInTutor = (tutorList) => {
+        let list = tutorList.filter((element) => account.email != element.email );
+        return list;
     }
 
     const DisplayFilters = () => {

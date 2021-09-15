@@ -14,6 +14,7 @@ import {API_URL} from '@env';
 import io from 'socket.io-client';
 import ConversationList from './pages/ConversationList';
 import PrivateChatLog from './pages/PrivateChatLog';
+import {Register} from './pages/Register'
 import {ConversationProvider, useConversationContext} from './context/ConversationContext';
 
 const Stack = createNativeStackNavigator();
@@ -47,14 +48,26 @@ const App = () => {
         tabBarLabelStyle: {fontFamily: 'Montserrat'}
       })
       }>
-          <Tab.Screen name="Tutor" component={TutorList} />
+          <Tab.Screen name="Tutor" component={TutorList} initialParams={{socket: socket}} />
           <Tab.Screen name="Conversations" initialParams={{socket: socket}} component={ConversationList}/>
       </Tab.Navigator>
     )
   }
 
+  const NotLoggedInPages = () => {
+      return (
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={Login} options={{headerShown: false}} initialParams={{
+                signedIn: signedIn,
+                setSignedIn: setSignedIn,
+                socket: socket
+              }} />
+         <Stack.Screen name="Register" component={Register} options={{headerShown: false}}/> 
+        </Stack.Navigator>
+      )
+  }
+
   return (
-    
       <NavigationContainer>
         <AuthenticationProvider>
           <Stack.Navigator>
@@ -64,11 +77,7 @@ const App = () => {
                 <Stack.Screen name="Profile" component={Profile} initialParams={{ socket: socket }} />
                 <Stack.Screen name="PrivateChat" component={PrivateChatLog} initialParams={{ socket: socket}} />
               </>) :
-              (<Stack.Screen name="Home" component={Login} options={{headerShown: false}} initialParams={{
-                signedIn: signedIn,
-                setSignedIn: setSignedIn,
-                socket: socket
-              }} />)
+              (<Stack.Screen name="NotLoggedIn" component={NotLoggedInPages} options={{headerShown: false}}/>)
             }
           </Stack.Navigator>
         </AuthenticationProvider>

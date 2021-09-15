@@ -43,7 +43,7 @@ async function createTutorAccount(email, password, firstName, lastName, subjects
 
 
 async function login(email, password) {
-    const account = await Account.findOne({email: email})
+    const account = await Account.findOne({email: email}).populate('accountType')
 
     if(account == null) {
         throw new Error({code: 'account_not_found'});

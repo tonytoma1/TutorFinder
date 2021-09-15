@@ -8,12 +8,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CookieManager from '@react-native-cookies/cookies';
 import {useAuthenticationContext} from '../AuthenticationContext';
 import Logo from '../components/Header';
-
+import {useAccountContext} from '../context/AccountContext';
+import { Link } from '@react-navigation/native';
 
 const LoginPage = ({navigation, route}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const authentication = useAuthenticationContext();
+    const [account, setAccount] = useAccountContext();
 
     const loginButtonHandler = async () => {
         await login(email, password);
@@ -24,11 +26,15 @@ const LoginPage = ({navigation, route}) => {
             const loginUrl = API_URL + 'api/account/login';
             const data = {email: email, password: password};
             let loginResponse = await axios.post(loginUrl, data);
+
+            setAccount(loginResponse.data.account);
             let cookies = await CookieManager.get(API_URL);
             authentication.refreshToken = cookies.refresh_token.value;
             authentication.accessToken = cookies.access_token.value;
             await AsyncStorage.setItem('tutor_app_refresh_token', authentication.refreshToken);
             await AsyncStorage.setItem('tutor_app_access_token', authentication.accessToken);
+
+
             route.params.socket.auth.username = email;
             route.params.socket.connect();
             route.params.setSignedIn(true);
@@ -48,6 +54,9 @@ const LoginPage = ({navigation, route}) => {
             <TouchableOpacity title="Sign In" style={styles.button} onPress={loginButtonHandler}>
                 <Text style={styles.buttonText}>Sign In</Text>
             </TouchableOpacity>
+            <Link style={styles.register} to={{screen: "Register"}}>
+                Don't have an account? Register here
+            </Link>
         </View>
     )
 }
@@ -90,6 +99,12 @@ const styles = StyleSheet.create({
     buttonText: {
         textAlign: 'center',
         color: 'white'
+    },
+    register: {
+        textAlign: 'center',
+        marginTop: 60,
+        textDecorationLine: 'underline',
+        color: 'blue'
     }
  
 })

@@ -1,11 +1,14 @@
 import React from 'react';
 import App from './App';
 import {ConversationProvider} from './context/ConversationContext';
+import {AccountContextProvider} from './context/AccountContext';
 
 const Wrapper = () => {
     return(
         <ConversationProvider>
-            <App/>
+            <AccountContextProvider>
+                <App/>
+            </AccountContextProvider>
         </ConversationProvider>
     )
 }
