@@ -37,7 +37,12 @@ router.post('/register-student', studentRules, validate, async (req, res, next) 
     return res.status(200).json({response: 'account created'});
   }
   catch(error) {
-    return res.status(400).json({response: 'Unable to create account'})
+    let msg = '';
+    if(error.code == DUPLICATE_EMAIL_ERROR_CODE) {
+      msg = 'That email is already registered into the system';
+    }
+
+    return res.status(400).json({response: 'Unable to create account', message: msg});
 
   }
 });

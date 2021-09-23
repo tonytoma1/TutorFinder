@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import {View, Text, TextInput, ScrollView, StyleSheet, Pressable} from 'react-native';
 import { validate } from 'validate.js';
-import axios from 'axios';
 import {API_URL} from '@env';
+import axios from 'axios';
+
 
 function StudentSignUp ({navigation}) {
     const [firstName, setFirstName] = useState(null);
@@ -16,13 +17,13 @@ function StudentSignUp ({navigation}) {
         firstName: {
             presence: true,
             format: {
-                pattern: "^[a-z]+$"
+                pattern: "^[a-zA-Z]+$"
             }
         },
         lastName: {
             presence: true,
             format: {
-                pattern: "^[a-z]+$"
+                pattern: "^[a-zA-Z]+$"
             }
         },
         email: {
@@ -39,33 +40,45 @@ function StudentSignUp ({navigation}) {
         }
     } 
 
-    const signUpStudent = async () => {
-        let userData = {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            password: password,
-            confirmPassword: confirmPassword
-        }
-        let validationResult = validate(userData, constraints);
+    async function signUpStudent(){
+            let userData = {
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                password: password,
+                confirmPassword: confirmPassword
+            }
+            let isValid = checkValidation(userData);
 
-        
-        // No errors are shown. Submit a request to the signup endpoint
+            if(isValid) {
+                let url = API_URL + 'api/account/register-student'; 
+                let errorFound;
+                try {
+                    let result = await axios.post(url, userData);
+                    let message = "Account Successfully Created"
+                    navigation.navigate('Home', {message: message});
+                }
+                catch(error) {
+                    errorFound = error;
+                    setErrors(error.response.data);
+                }
+            }
+    }
+    
+
+    function checkValidation(userData) {
+        let isValid = false;
+        let validationResult = validate(userData, constraints);
         if (validationResult == undefined) {
-            try {
-               let result = await axios.post(API_URL + 'api/account/register-student', userData);
-                setErrors([]);
-            }
-            catch(errors) {
-                let registrationErrors = errors;
-            }
-            
+            isValid = true;
         }
         else {
             // Display errors to user
             setErrors(validationResult);
-
         }
+
+        return isValid;
+
     }
 
     const DisplayErrors = () => {

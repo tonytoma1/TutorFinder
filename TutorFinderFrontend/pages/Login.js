@@ -34,7 +34,6 @@ const LoginPage = ({navigation, route}) => {
             await AsyncStorage.setItem('tutor_app_refresh_token', authentication.refreshToken);
             await AsyncStorage.setItem('tutor_app_access_token', authentication.accessToken);
 
-
             route.params.socket.auth.username = email;
             route.params.socket.connect();
             route.params.setSignedIn(true);
@@ -57,6 +56,7 @@ const LoginPage = ({navigation, route}) => {
             <Link style={styles.register} to={{screen: "Register"}}>
                 Don't have an account? Register here
             </Link>
+            {route.params.message ? <Text>{route.params.message}</Text> : null}
         </View>
     )
 }
