@@ -15,7 +15,6 @@ const studentRules = [
     check('password').exists().isString(),
     check('firstName').exists().isString(),
     check('lastName').exists().isString(),
-    check('subjects').exists().isArray()
 ]
 
 const tutorRules = [

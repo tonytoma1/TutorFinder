@@ -19,7 +19,7 @@
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/native-stack": "^6.0.3",
     "@react-navigation/stack": "^6.0.7",
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "cookies": "^0.8.0",
     "react": "17.0.1",
     "react-native": "^0.64.2",
@@ -27,6 +27,7 @@
     "react-native-gesture-handler": "^1.10.3",
     "react-native-keyboard-aware-scrollview": "^2.1.0",
     "react-native-pager-view": "^5.4.0",
+    "react-native-paper": "^4.9.2",
     "react-native-reanimated": "^2.2.0",
     "react-native-safe-area-context": "^3.3.0",
     "react-native-screens": "^3.5.0",
@@ -36,7 +37,8 @@
     "react-native-webview": "^11.13.0",
     "react-navigation": "^4.4.4",
     "rn-range-slider": "^2.1.1",
-    "socket.io-client": "^4.1.3"
+    "socket.io-client": "^4.1.3",
+    "validate.js": "^0.13.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

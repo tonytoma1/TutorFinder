@@ -3,9 +3,9 @@ const Student = require('../models/student');
 const Tutor = require('../models/tutor');
 const bcrypt = require('bcryptjs');
 
-async function createStudentAccount(email, password, firstName, lastName, subjects) {
+async function createStudentAccount(email, password, firstName, lastName) {
     const student = new Student({
-        subjects: subjects
+      
     });
     const savedStudent = await student.save();
 

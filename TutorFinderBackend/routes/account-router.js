@@ -30,7 +30,7 @@ router.post('/login', loginRules, validate, async (req, res, next) =>  {
 // Create a student account
 router.post('/register-student', studentRules, validate, async (req, res, next) => {
   try {
-    const studentAccount = await createStudentAccount(req.body.email, req.body.password, req.body.firstName, req.body.lastName, req.body.subjects);
+    const studentAccount = await createStudentAccount(req.body.email, req.body.password, req.body.firstName, req.body.lastName);
     const tokens = generateAccessAndRefreshTokens(studentAccount.email);
     res.cookie("refresh_token", tokens.refreshToken, {httpOnly: true});
     res.cookie("access_token", tokens.accessToken, {httpOnly: true});
