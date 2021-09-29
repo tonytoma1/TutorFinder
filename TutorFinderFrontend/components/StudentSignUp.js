@@ -70,7 +70,14 @@ function StudentSignUp ({navigation}) {
         let isValid = false;
         let validationResult = validate(userData, constraints);
         if (validationResult == undefined) {
-            isValid = true;
+            if(password == confirmPassword) {
+                isValid = true;
+            }
+            else {
+                let error = {message: "Passwords don't match"}
+                setErrors(error);
+            }
+           
         }
         else {
             // Display errors to user
@@ -82,6 +89,7 @@ function StudentSignUp ({navigation}) {
     }
 
     const DisplayErrors = () => {
+    
         if(errors.length == 0) {
             return;
         }
@@ -89,7 +97,7 @@ function StudentSignUp ({navigation}) {
         return (
             Object.keys(errors).map((key, index) => {
                 return(
-                    <Text>{errors[key]}</Text>
+                    <Text style={styles.errorLog}>{'\u2B24'} {errors[key]}</Text>
                 )
             })
         )
@@ -97,7 +105,6 @@ function StudentSignUp ({navigation}) {
 
   return(
       <View>
-        <Text>Students</Text>
 
         <View>
             {errors.length != 0 ?  <DisplayErrors/>: null}
@@ -120,12 +127,12 @@ function StudentSignUp ({navigation}) {
 
         <View style={[styles.row, styles.inputContainer]}>
             <Text style={styles.label}>Password</Text>
-            <TextInput style={styles.input} onChangeText={(val) => setPassword(val)}/>
+            <TextInput secureTextEntry={true} style={styles.input} onChangeText={(val) => setPassword(val)}/>
         </View>
         
         <View style={[styles.row, styles.inputContainer]}>
             <Text style={styles.label}>Confirm Password</Text>
-            <TextInput style={styles.input} onChangeText={(val) => setConfirmPassword(val)}/>
+            <TextInput secureTextEntry={true} style={styles.input} onChangeText={(val) => setConfirmPassword(val)}/>
         </View>
 
         <View  style={styles.row}>
@@ -236,6 +243,11 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 'auto',
         marginBottom: 'auto'
+    },
+    errorLog: {
+        width: 160,
+        marginLeft: 'auto',
+        marginRight: 'auto'
     }
 })
 

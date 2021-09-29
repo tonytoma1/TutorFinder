@@ -2,13 +2,117 @@ import React, {useState, useRef, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {KeyboardAvoidingView, View, Text, TextInput, StyleSheet, ScrollView, Button, Pressable} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import {navigation} from '@react-navigation/native'
+import { navigation } from '@react-navigation/native'
+import { validate } from 'validate.js';
 
 function TutorForm(props) {
     const [subjectTyped, setSubjectTyped] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [price, setPrice] = useState('');
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [taughtSubjects, setTaughtSubjects] = useState([]);
+    const [errors, setErrors] = useState({});
     const scrollViewRef = useRef();
     const subjectInputRef = useRef();
+
+    const constraints = {
+        firstName: {
+            presence: true,
+            format: {
+                pattern: "^[a-zA-Z]+$"
+            }
+        },
+        lastName: {
+            presence: true,
+            format: {
+                pattern: "^[a-zA-Z]+$"
+            }
+        },
+        email: {
+            presence: true,
+            email: true
+        },
+        password: {
+            presence: true,
+            length: {minimum: 6}
+        },
+        confirmPassword: {
+            presence: true,
+            length: {minimum: 6}
+        },
+        price: {
+            presence: true,
+            format: {
+                pattern: "^[0-9]+$"
+            }
+        },
+        subjects: {
+            presence: true
+        }
+    } 
+
+    async function signUpTutor(){
+        let userData = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: password,
+            confirmPassword: confirmPassword,
+            subjects: taughtSubjects
+        }
+        let isValid = checkValidation(userData);
+
+        if (isValid) {
+            let url = API_URL + 'api/account/register-tutor';
+            let errorFound;
+            try {
+                let result = await axios.post(url, userData);
+                let message = "Account Successfully Created"
+                navigation.navigate('Home', { message: message });
+            }
+            catch (error) {
+                errorFound = error;
+                setErrors(error.response.data);
+            }
+        }
+        else {
+            DisplayErrors();
+        }
+    }
+
+    function checkValidation(userData) {
+        let isValid = false;
+        let validationResult = validate(userData, constraints);
+        let errorLog = {}
+
+        if (validationResult != undefined) {
+            errorLog = Object.assign(errorLog, validationResult);
+        }
+        if (password != confirmPassword) {
+            let passwordError = { passwordMatchMessage: 'passwords don\'t match' }
+            errorLog = Object.assign(errorLog, passwordError);
+        }
+        if (taughtSubjects <= 0) {
+            let subjectsError = { subjectsSizeMessage: 'You must add at least 1 subject' }
+            errorLog = Object.assign(errorLog, subjectsError);
+        }
+        // If no errors were found, then the form is valid.  
+        if (Object.keys(errorLog).length == 0) {
+            isValid = true;
+        }
+        if (Object.keys(errorLog).length != 0) {
+            setErrors(errorLog);
+        }
+
+
+        return isValid;
+
+    }
+
+
 
     const removeSubjects = (index) => {
         let subjects = [...taughtSubjects]
@@ -30,34 +134,62 @@ function TutorForm(props) {
         }
 
     }
+
+    const DisplayErrors = () => {
+
+        if (errors.length == 0) {
+            return;
+        }
+
+        return (
+            Object.keys(errors).map((key, index) => {
+                return (
+                    <Text style={styles.errorLog}>{'\u2B24'} {errors[key]}</Text>
+                )
+            })
+        )
+    }
     
 
-    return(
-        <ScrollView style={styles.tutorRegisterContainer} ref={scrollViewRef} onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
-            <KeyboardAvoidingView behavior="height" >
+    return (
+        <KeyboardAvoidingView style={styles.tutorRegisterContainer} ref={scrollViewRef} onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
+            <View>
+            {errors.length != 0 ?  <DisplayErrors/>: null}
+            </View>
+            <View behavior="height" >
                 <View style={[styles.row, styles.inputContainer]}>
                     <Text style={styles.label}>First Name</Text>
-                    <TextInput style={styles.tutorInput} />
+                    <TextInput style={styles.tutorInput} placeholder="John" onChangeText={(text) => { setFirstName(text) }} />
                 </View>
 
                 <View style={[styles.row, styles.inputContainer]}>
                     <Text style={styles.label}>Last Name</Text>
-                    <TextInput style={styles.tutorInput} />
+                    <TextInput style={styles.tutorInput} placeholder="Doe" onChangeText={text => setLastName(text)} />
                 </View>
 
                 <View style={[styles.row, styles.inputContainer]}>
                     <Text style={styles.label}>Email</Text>
-                    <TextInput style={styles.tutorInput} />
+                    <TextInput style={styles.tutorInput} placeholder="john.doe@example.com" onChangeText={val => setEmail(val)} />
                 </View>
 
                 <View style={[styles.row, styles.inputContainer]}>
-                    <Text style={styles.label}>Price</Text>
-                    <TextInput style={styles.tutorInput} />
+                    <Text style={styles.label}>Price per hour</Text>
+                    <TextInput style={styles.tutorInput} placeholder="20" keyboardType="numeric" onChangeText={val => setPrice(val)} />
+                </View>
+
+                <View style={[styles.row, styles.inputContainer]}>
+                    <Text style={styles.label}>Password</Text>
+                    <TextInput style={styles.tutorInput} secureTextEntry={true} onChangeText={val => setPassword(val)} />
+                </View>
+
+                <View style={[styles.row, styles.inputContainer]}>
+                    <Text style={styles.label}>Confirm Password</Text>
+                    <TextInput style={styles.tutorInput} secureTextEntry={true} onChangeText={val => setConfirmPassword(val)} />
                 </View>
 
                 <View style={[styles.row, styles.inputContainer]}>
                     <Text style={styles.label}>Subjects</Text>
-                    <TextInput style={styles.tutorInput} ref={subjectInputRef}
+                    <TextInput style={styles.tutorInput} placeholder="Linear Algebra" ref={subjectInputRef}
                         onChangeText={(val) => setSubjectTyped(val)}
                         onBlur={() => addSubject()} />
                 </View>
@@ -81,17 +213,17 @@ function TutorForm(props) {
                 </View>
 
                 <View>
-                    <TouchableOpacity style={[styles.signUpButton, styles.buttonMain]}>
+                    <Pressable onPress={async () => await signUpTutor()} style={[styles.signUpButton, styles.buttonMain]}>
                         <Text style={styles.centerText}>Sign up as a tutor</Text>
-                    </TouchableOpacity>
+                    </Pressable>
                 </View>
 
                 <Pressable title="Cancel" onPress={() => goToHome()} style={[styles.signUpButton, styles.secondaryButton]}>
                     <Text style={styles.centerText}>Cancel</Text>
                 </Pressable>
 
-            </KeyboardAvoidingView>
-        </ScrollView>
+            </View>
+        </KeyboardAvoidingView>
   )
 }
 
@@ -102,7 +234,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     tutorInput: {
-        width: '100%',
+        width: '70%',
         height: 50,
         borderWidth: 1,
 
@@ -185,6 +317,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 'auto',
         marginBottom: 'auto'
+    },
+    errorLog: {
+        textAlign: 'center'
     }
 })
 
