@@ -3,9 +3,10 @@ import {View, Text, TextInput, ScrollView, StyleSheet, Pressable} from 'react-na
 import { validate } from 'validate.js';
 import {API_URL} from '@env';
 import axios from 'axios';
+import { baseProps } from 'react-native-gesture-handler/lib/typescript/handlers/gestureHandlers';
 
 
-function StudentSignUp ({navigation}) {
+function StudentSignUp (props) {
     const [firstName, setFirstName] = useState(null);
     const [lastName, setLastName] = useState(null);
     const [email, setEmail] = useState(null);
@@ -41,6 +42,7 @@ function StudentSignUp ({navigation}) {
     } 
 
     async function signUpStudent(){
+            props.setLoading(true);
             let userData = {
                 firstName: firstName,
                 lastName: lastName,
@@ -55,12 +57,14 @@ function StudentSignUp ({navigation}) {
                 let errorFound;
                 try {
                     let result = await axios.post(url, userData);
+                    props.setLoading(false);
                     let message = "Account Successfully Created"
-                    navigation.navigate('Home', {message: message});
+                    props.navigation.navigate('Home', {message: message});
                 }
                 catch(error) {
                     errorFound = error;
                     setErrors(error.response.data);
+                    props.setLoading(false);
                 }
             }
     }
@@ -143,7 +147,7 @@ function StudentSignUp ({navigation}) {
         
   
             <View style={styles.row}>
-                <Pressable onPress={() => {navigation.navigate('Home')}} style={styles.cancelButton}>
+                <Pressable onPress={() => {props.navigation.navigate('Home')}} style={styles.cancelButton}>
                     <Text style={styles.cancelText}>Cancel</Text>
                 </Pressable>
             </View>

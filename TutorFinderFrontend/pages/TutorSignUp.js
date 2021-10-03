@@ -1,9 +1,12 @@
 import React, {useState, useRef, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {KeyboardAvoidingView, View, Text, TextInput, StyleSheet, ScrollView, Button, Pressable} from 'react-native';
+import { KeyboardAvoidingView, View, Text, TextInput, StyleSheet, ActivityIndicator, Pressable} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { navigation } from '@react-navigation/native'
 import { validate } from 'validate.js';
+import { API_URL } from  "@env";
+import axios from 'axios';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 function TutorForm(props) {
     const [subjectTyped, setSubjectTyped] = useState('');
@@ -54,14 +57,16 @@ function TutorForm(props) {
         }
     } 
 
-    async function signUpTutor(){
+    async function signUpTutor() {
+        props.setLoading(true);
         let userData = {
             firstName: firstName,
             lastName: lastName,
             email: email,
             password: password,
             confirmPassword: confirmPassword,
-            subjects: taughtSubjects
+            subjects: taughtSubjects,
+            price: price
         }
         let isValid = checkValidation(userData);
 
@@ -70,17 +75,21 @@ function TutorForm(props) {
             let errorFound;
             try {
                 let result = await axios.post(url, userData);
-                let message = "Account Successfully Created"
-                navigation.navigate('Home', { message: message });
+                let message = "Account Was Successfully Created"
+                props.setLoading(false);
+                props.navigation.navigate('Home', { message: message });
             }
             catch (error) {
                 errorFound = error;
                 setErrors(error.response.data);
             }
+                   
         }
         else {
             DisplayErrors();
         }
+
+        props.setLoading(false);
     }
 
     function checkValidation(userData) {
@@ -153,6 +162,7 @@ function TutorForm(props) {
 
     return (
         <KeyboardAvoidingView style={styles.tutorRegisterContainer} ref={scrollViewRef} onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
+         
             <View>
             {errors.length != 0 ?  <DisplayErrors/>: null}
             </View>

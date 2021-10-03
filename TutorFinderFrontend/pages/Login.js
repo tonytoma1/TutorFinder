@@ -53,10 +53,12 @@ const LoginPage = ({navigation, route}) => {
             <TouchableOpacity title="Sign In" style={styles.button} onPress={loginButtonHandler}>
                 <Text style={styles.buttonText}>Sign In</Text>
             </TouchableOpacity>
+             {route.params.message ? <Text style={styles.successMessage}>{route.params.message}</Text> : null}
             <Link style={styles.register} to={{screen: "Register"}}>
                 Don't have an account? Register here
             </Link>
-            {route.params.message ? <Text>{route.params.message}</Text> : null}
+            
+          
         </View>
     )
 }
@@ -105,6 +107,13 @@ const styles = StyleSheet.create({
         marginTop: 60,
         textDecorationLine: 'underline',
         color: 'blue'
+    },
+    successMessage: {
+        textAlign: 'center',
+        marginTop: 60,
+        fontSize: 18,
+        color: 'green',
+        textDecorationLine: 'underline'
     }
  
 })

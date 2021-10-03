@@ -1,13 +1,10 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import Header from './components/Header';
 import Login from './pages/Login';
 import TutorList from './pages/TutorList';
 import Profile from './pages/Profile';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import {AuthenticationProvider} from './AuthenticationContext';
 import {API_URL} from '@env';
@@ -15,7 +12,7 @@ import io from 'socket.io-client';
 import ConversationList from './pages/ConversationList';
 import PrivateChatLog from './pages/PrivateChatLog';
 import {Register} from './pages/Register'
-import {ConversationProvider, useConversationContext} from './context/ConversationContext';
+import { ConversationProvider, useConversationContext } from './context/ConversationContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialTopTabNavigator();
