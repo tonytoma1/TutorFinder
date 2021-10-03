@@ -27,24 +27,27 @@ function Profile({route, navigation}) {
 
                     {/* Tutor information column */}
                     <View style={styles.profileContainer}>
-                        <Text>{user.firstName} {user.lastName}</Text>
-                        {user.accountType != null ? <Text>{user.accountType.jobTitle}</Text> : ''}
+                        <Text style={[styles.defaultFont, styles.tutorFullName]}>{user.firstName} {user.lastName}</Text>
+                        {user.accountType != null ? <Text style={styles.defaultFont}>{user.accountType.jobTitle}</Text> : ''}
                         {/* Loop through the tutor's subjects */}
                         <View style={styles.subjectContainer}>
                         {user.accountType.subjects.map((item, index) => {
                             return (
-                                    <Text key={index} style={styles.subject}>{item}</Text>
+                                    <Text key={index} style={[styles.subject, styles.defaultFont]}>{item}</Text>
                             )
                         })}
                         </View>
-                        <Text>{user.email}</Text>
-                        <Pressable style={styles.startChatButton} onPress={() => startChat(user)}
-                        ><Text>Message {user.firstName}</Text></Pressable>
+                        <Text style={styles.defaultFont}>{user.email}</Text>
+                        <Text style={styles.defaultFont}>${user.accountType.price}/hr</Text>
+                        <Pressable style={styles.startChatButton} onPress={() => startChat(user)}>
+                            <Text style={styles.profileButtonText}>Message {user.firstName}</Text>
+                        </Pressable>
                     </View> 
                 </View>
 
                 {/* Tutor's description */}
                 <ScrollView>
+                    <Text>About Me</Text>
 
                 </ScrollView>
 
@@ -55,17 +58,23 @@ function Profile({route, navigation}) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
     },
     tutorContainer: {
-        flexDirection: "row"
+        flexDirection: "row",
+        borderWidth: 1,
+        borderColor: '#11C281'
     }
     ,
     imageContainer: {
         flexDirection: "column"
     },
+    tutorFullName: {
+        fontSize: 20
+    },
     profileContainer: {
-        flexDirection: "column"
+        flexDirection: "column",
+        marginLeft: 10
     },
     profilePicture: {
         width: 100,
@@ -75,13 +84,30 @@ const styles = StyleSheet.create({
         flexDirection: "row"
     },
     subject: {
-        flexWrap: "wrap"
+        flexWrap: "wrap",
+        marginRight: 10,
+        borderWidth: 1,
+        padding: 4,
+        borderRadius: 10,
+        borderColor: '#11C281'
     },
     startChatButton: {
-        backgroundColor: 'gray',
-        marginLeft: 10,
-        marginTop: 10
-    }
+        backgroundColor: '#11C281',
+        borderRadius: 10,
+        marginTop: 10,
+    
+        
+    },
+    profileButtonText: {
+        textAlign: 'center',
+        marginTop: 5,
+        marginBottom: 5,
+        color: 'white'
+    },
+    defaultFont: {
+        fontFamily: 'Montserrat'
+    },
+    
 })
 
 
