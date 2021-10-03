@@ -1,0 +1,11 @@
+-- Incomplete
+Create profile page to view user profile
+Display Login page error message (incorrect email or password)
+Add signout button
+Keyboard dismisses when a new chat message appears when the other user is typing
+Conversations list doesn't update when a new chat is created
+Create loading icon/splash screen
+Screen loads twice upon login (it loads the tutor list and the conversation list)
+
+-- Polish List
+Filter by types, price, ratings 
