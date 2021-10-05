@@ -16,6 +16,7 @@ function TutorForm(props) {
     const [price, setPrice] = useState('');
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [jobTitle, setJobTitle] = useState('');
     const [taughtSubjects, setTaughtSubjects] = useState([]);
     const [errors, setErrors] = useState({});
     const scrollViewRef = useRef();
@@ -52,6 +53,9 @@ function TutorForm(props) {
                 pattern: "^[0-9]+$"
             }
         },
+        jobTitle:{
+            presence: true
+        },
         subjects: {
             presence: true
         }
@@ -66,7 +70,8 @@ function TutorForm(props) {
             password: password,
             confirmPassword: confirmPassword,
             subjects: taughtSubjects,
-            price: price
+            price: price,
+            jobTitle: jobTitle
         }
         let isValid = checkValidation(userData);
 
@@ -181,6 +186,11 @@ function TutorForm(props) {
                     <Text style={styles.label}>Email</Text>
                     <TextInput style={styles.tutorInput} placeholder="john.doe@example.com" onChangeText={val => setEmail(val)} />
                 </View>
+                
+                <View style={[styles.row, styles.inputContainer]}>
+                    <Text style={styles.label}>Title</Text>
+                    <TextInput style={styles.tutorInput} placeholder="Accountant, Engineering Student, Nurse, etc" onChangeText={val => setJobTitle(val)} />
+                </View>
 
                 <View style={[styles.row, styles.inputContainer]}>
                     <Text style={styles.label}>Price per hour</Text>
@@ -217,9 +227,6 @@ function TutorForm(props) {
                             )
                         })}
                     </View>
-                </View>
-                <View style={[styles.row]}>
-                    <Text style={styles.label}></Text>
                 </View>
 
                 <View>

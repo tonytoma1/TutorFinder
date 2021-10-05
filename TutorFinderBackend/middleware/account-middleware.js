@@ -22,6 +22,7 @@ const tutorRules = [
     check('password').exists().isString(),
     check('firstName').exists().isString(),
     check('lastName').exists().isString(),
+    check('jobTitle').exists().isString(),
     check('subjects').exists().isArray(),
     check('price').exists().isNumeric()
 ]

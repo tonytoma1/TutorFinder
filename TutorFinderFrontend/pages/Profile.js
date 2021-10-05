@@ -28,7 +28,7 @@ function Profile({route, navigation}) {
                     {/* Tutor information column */}
                     <View style={styles.profileContainer}>
                         <Text style={[styles.defaultFont, styles.tutorFullName]}>{user.firstName} {user.lastName}</Text>
-                        {user.accountType != null ? <Text style={styles.defaultFont}>{user.accountType.jobTitle}</Text> : ''}
+                        {user.accountType != null ? <Text style={[styles.defaultFont, styles.jobTitle]}>{user.accountType.jobTitle}</Text> : ''}
                         {/* Loop through the tutor's subjects */}
                         <View style={styles.subjectContainer}>
                         {user.accountType.subjects.map((item, index) => {
@@ -37,17 +37,19 @@ function Profile({route, navigation}) {
                             )
                         })}
                         </View>
-                        <Text style={styles.defaultFont}>{user.email}</Text>
-                        <Text style={styles.defaultFont}>${user.accountType.price}/hr</Text>
-                        <Pressable style={styles.startChatButton} onPress={() => startChat(user)}>
-                            <Text style={styles.profileButtonText}>Message {user.firstName}</Text>
-                        </Pressable>
+                        <Text style={[styles.defaultFont, styles.tutorEmail]}>{user.email}</Text>
+                        <Text style={[styles.defaultFont, styles.tutorPrice]}>${user.accountType.price}/hr</Text>
+                        <View style={styles.row}>
+                            <Pressable style={styles.startChatButton} onPress={() => startChat(user)}>
+                                <Text style={styles.profileButtonText}>Message {user.firstName}</Text>
+                            </Pressable>
+                        </View>
                     </View> 
                 </View>
 
                 {/* Tutor's description */}
-                <ScrollView>
-                    <Text>About Me</Text>
+                <ScrollView style={styles.aboutMeContainer}>
+                    <Text style={[styles.aboutMeTitle, styles.defaultFont]}>About Me</Text>
 
                 </ScrollView>
 
@@ -63,25 +65,35 @@ const styles = StyleSheet.create({
     tutorContainer: {
         flexDirection: "row",
         borderWidth: 1,
-        borderColor: '#11C281'
-    }
-    ,
+        borderColor: '#11C281',
+        paddingLeft: 10,
+        paddingTop: 10
+    },
+    row: {
+        flexDirection: 'row'
+    },
     imageContainer: {
         flexDirection: "column"
     },
     tutorFullName: {
-        fontSize: 20
+        fontSize: 20,
+        marginBottom: 10
     },
     profileContainer: {
         flexDirection: "column",
-        marginLeft: 10
+        marginLeft: 20
     },
     profilePicture: {
         width: 100,
-        height: 100
+        height: 100,
+        borderRadius: 20
     },
     subjectContainer: {
-        flexDirection: "row"
+        flexDirection: "row",
+        marginBottom: 10
+    },
+    jobTitle: {
+        marginBottom: 10
     },
     subject: {
         flexWrap: "wrap",
@@ -95,8 +107,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#11C281',
         borderRadius: 10,
         marginTop: 10,
-    
-        
+        width: 150,
+        marginBottom: 10
     },
     profileButtonText: {
         textAlign: 'center',
@@ -107,6 +119,23 @@ const styles = StyleSheet.create({
     defaultFont: {
         fontFamily: 'Montserrat'
     },
+    tutorEmail: {
+        marginBottom: 10
+    },
+    tutorPrice: {
+        fontSize: 18,
+        marginBottom: 10
+    },
+    aboutMeTitle: {
+        fontSize: 20,
+        textDecorationLine: 'underline',
+    },
+    aboutMeContainer: {
+        paddingLeft: 10,
+        paddingTop: 10
+    }
+    
+
     
 })
 

@@ -51,7 +51,8 @@ router.post('/register-student', studentRules, validate, async (req, res, next) 
 router.post('/register-tutor', tutorRules, validate, async (req, res, next) => {
   try {
     const tutorAccount = await createTutorAccount(req.body.email, req.body.password, req.body.firstName,
-                                                  req.body.lastName, req.body.subjects, req.body.price);
+                                                  req.body.lastName, req.body.subjects, req.body.price,
+                                                  req.body.jobTitle);
     const tokens = generateAccessAndRefreshTokens(tutorAccount.email);
     res.cookie("refresh_token", tokens.refreshToken, {httpOnly: true});
     res.cookie("access_token", tokens.accessToken, {httpOnly: true});

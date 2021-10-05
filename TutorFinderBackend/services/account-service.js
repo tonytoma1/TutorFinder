@@ -21,10 +21,11 @@ async function createStudentAccount(email, password, firstName, lastName) {
    return await account.save();
 }
 
-async function createTutorAccount(email, password, firstName, lastName, subjects, price) {
+async function createTutorAccount(email, password, firstName, lastName, subjects, price, jobTitle) {
     const tutor = new Tutor({
         subjects: subjects,
-        price, price
+        price, price,
+        jobTitle: jobTitle
     });
     const savedTutor = await tutor.save();
 
