@@ -1,8 +1,10 @@
 -- Incomplete
 Conversations list doesn't update when a new chat is created. Also conversation list doesn't appear sometimes upon load up
+Try emitting a message to the backend to pull the conversation list for the user instead of sending the conversation list upon login
+
 Add Edit Profile page
 Add signout button
-Change data format for chats
+Change date format for chats
 Create loading icon/splash screen
 Screen loads twice upon login (it loads the tutor list and the conversation list)
 

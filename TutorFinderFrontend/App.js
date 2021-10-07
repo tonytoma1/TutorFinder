@@ -12,6 +12,7 @@ import io from 'socket.io-client';
 import ConversationList from './pages/ConversationList';
 import PrivateChatLog from './pages/PrivateChatLog';
 import {Register} from './pages/Register'
+import {Settings} from './pages/Settings'
 import { ConversationProvider, useConversationContext } from './context/ConversationContext';
 
 const Stack = createNativeStackNavigator();
@@ -36,6 +37,7 @@ const App = () => {
       }>
           <Tab.Screen name="Tutor" component={TutorList} initialParams={{socket: socket}} />
           <Tab.Screen name="Conversations" initialParams={{socket: socket}} component={ConversationList}/>
+          <Tab.Screen name="Settings" component={Settings}/>
       </Tab.Navigator>
     )
   }
