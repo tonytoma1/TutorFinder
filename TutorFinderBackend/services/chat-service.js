@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
  * @param {String} recipientEmail - the email of the user that is receiving the message.
  * @param {String} senderEmail - the email of the user that is sending the message
  * @param {String} message - the message that is being sent
- * @returns boolean if the chat was saved or not.
+ * @returns boolean and chat message object containing the message and if the message was successfully sent
  */
 async function saveMessage(recipientEmail, senderEmail, message) {
     try {
@@ -34,10 +34,10 @@ async function saveMessage(recipientEmail, senderEmail, message) {
         await chat.save();
         conversation.messages.push(chat.id);
         await conversation.save();
-        return true;
+        return {messageSaved: true, message: chat};
     }
     catch(error) {
-        return false;
+        return {messageSaved: false, message: null};
     }
 }
 
@@ -69,5 +69,8 @@ async function getAllConversationsForUser(email) {
     }
     return conversation;
 }
+
+
+
 
 module.exports = {saveMessage, getAllConversationsForUser}

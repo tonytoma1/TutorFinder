@@ -14,7 +14,7 @@ function TutorList ({route, navigation}) {
     const [tutors, setTutors] = useState(new Array());
     const [filteredTutorList, setFilteredTutorList] = useState(new Array());
     const [loading, setLoading] = useState(true);
-    const [currentPrice, setCurrentPrice] = useState(40);
+    const [currentPrice, setCurrentPrice] = useState(1000);
     const [showFilters, setShowFilters] = useState(false);
     const [account, setAccount] = useAccountContext();
     

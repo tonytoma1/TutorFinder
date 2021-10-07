@@ -9,16 +9,54 @@ import CookieManager from '@react-native-cookies/cookies';
 import {useAuthenticationContext} from '../AuthenticationContext';
 import Logo from '../components/Header';
 import {useAccountContext} from '../context/AccountContext';
+import { validate } from 'validate.js';
 import { Link } from '@react-navigation/native';
 
 const LoginPage = ({navigation, route}) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
     const authentication = useAuthenticationContext();
     const [account, setAccount] = useAccountContext();
+    const [errorMessage, setErrorMessage] = useState({});
+
+    const constraints = {
+        email: {
+            presence: true,
+            email: true
+        },
+        password: {
+            presence: true
+        }
+    }
 
     const loginButtonHandler = async () => {
-        await login(email, password);
+        let result = verifyConstraints();
+        if(result) {
+            await login(email, password);
+        }
+    }
+
+    /**
+     * Checks if the login credentials are in a valid format
+     * @returns Boolean indicating if the login credentials are in valid format
+     */
+    const verifyConstraints = () => {
+        let valid = false;
+        let userData = {
+            email: email,
+            password: password
+        }
+        let result = validate(userData, constraints)
+
+        if(result == undefined) {
+            valid = true;
+        }
+        else {
+            setErrorMessage(result);
+        }
+
+        return valid;
+
     }
 
     const login = async () => {
@@ -39,13 +77,29 @@ const LoginPage = ({navigation, route}) => {
             route.params.setSignedIn(true);
         }
         catch(error) {
-            console.debug(error);
+            let result =  {message: 'Incorrect email or password'}
+            setErrorMessage(result);
         }
+    }
+
+    function DisplayErrors() {
+        
+        if (errorMessage.length == 0) {
+            return;
+        }
+        
+        return(
+            Object.keys(errorMessage).map((key, index) => {
+                return <Text style={styles.error}>{'\u2B24'} {errorMessage[key]}</Text>
+            })
+            
+        )
     }
 
     return(
         <View style={styles.wrapper}>
             <Image style={styles.logo} source={require('../images/logo-large.png')} />
+            {errorMessage.length != 0 ? <DisplayErrors/> : null}
             <Text style={styles.label}>Email</Text>
             <TextInput style={styles.input} onChangeText={setEmail} value={email} />
             <Text style={styles.label}>Password</Text>
@@ -114,6 +168,9 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: 'green',
         textDecorationLine: 'underline'
+    },
+    error: {
+        textAlign: 'center'
     }
  
 })

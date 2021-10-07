@@ -11,7 +11,7 @@ function Profile({route, navigation}) {
     const startChat = (user) => {
         let recipient = user;
         let sender = socket.auth.username;
-        navigation.navigate("PrivateChat", {user: user})
+        navigation.navigate("PrivateChat", {recipient: user})
     }
 
     return(

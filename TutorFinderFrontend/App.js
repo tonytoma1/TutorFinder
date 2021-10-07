@@ -19,7 +19,6 @@ const Tab = createMaterialTopTabNavigator();
 
 const App = () => {
   const [signedIn, setSignedIn] = useState(false);
-  const [conversations, setConversations] = useConversationContext();
   const [socket, setSocket] = useState(io(API_URL, {
                                         autoConnect: false,
                                         auth: {
@@ -27,16 +26,6 @@ const App = () => {
                                             sessionId: null,
                                             userId: null
                                         }}));
-
-  useEffect(() => {
-     // Load all of the conversations the user has
-     socket.on('conversations_list', (userConversations) => {
-      setConversations(userConversations);
-    })
-    socket.on("message_received", (newConversationsList) => {
-      setConversations(newConversationsList);
-    })
-  }, [socket])
 
   const MainTabs = () => {
     return (

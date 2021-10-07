@@ -7,11 +7,18 @@ function ConversationList({route, navigation}) {
     const socket = route.params.socket
 
     useEffect(() => {
-     
-    }, [conversations])
+         // Load all of the conversations the user has
+         socket.on('conversations_list', (userConversations) => {
+            setConversations(userConversations);
+          })
+          socket.on("updated_conversations", (newConversationsList) => {
+            setConversations(newConversationsList);
+          })
+          
+    }, [])
 
     const displayPrivateChat = (user, privateChat) => {
-        navigation.navigate('PrivateChat', {user: user});
+        navigation.navigate('PrivateChat', {recipient: user});
     }
 
     if(conversations != null && conversations != undefined  && conversations.length != 0 ) {
@@ -35,7 +42,7 @@ function ConversationList({route, navigation}) {
                                                 <Text style={styles.recipientName}>{recipient.firstName} {recipient.lastName}</Text>
                                                 <Text style={styles.messageBox}>
                                                     {element.messages[element.messages.length - 1].fromUser.email == socket.auth.username ?
-                                                    <Text >(you): </Text> : <Text>{element.messages[element.messages.length - 1].fromUser.firstName}</Text>}
+                                                    <Text >(you): </Text> : <Text>{element.messages[element.messages.length - 1].fromUser.firstName}: </Text>}
                                                     <Text >{element.messages[element.messages.length - 1].message} </Text>                 
                                                 </Text>
                                             </View>

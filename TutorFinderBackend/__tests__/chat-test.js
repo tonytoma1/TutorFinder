@@ -19,17 +19,17 @@ it('given a message sent to a user, saveChatMessage() should return true', async
     let recipient = await Account.findOne({email: 'registertutor2@example.com'});
     let message = "Hello World!";
     let result = await saveMessage(recipient.email, sender.email, message);
-    expect(result).toBe(true);
+    expect(result.messageSaved).toBe(true);
 }, 30000)
 
 it("given a user's email, getAllConversationsForUser() should return conversation object", async () => {
-    let email = "registertutor1@example.com";
+    let email = "example@example.com";
     let result = await getAllConversationsForUser(email);
     expect(result.length).not.toBe(0);
-    expect(result.length).toBe(1);
 
     let noConversationEmail = "registertutor3@example.com";
     let output = await getAllConversationsForUser(noConversationEmail);
     expect(output.length).toBe(0);
 })
+
 
