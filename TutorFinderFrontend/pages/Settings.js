@@ -5,16 +5,17 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 function Settings ({navigation}) {
     return(
         <ScrollView>
-            <Pressable style={[styles.row, styles.pageLink]} onPress={() => {navigation.navigate('Settings')}}>
+            <Pressable style={[styles.row, styles.pageLink]} onPress={() => {navigation.navigate('EditProfile')}}>
                 <Text style={styles.linkFont}>Edit Account</Text>
             </Pressable>
-            <Pressable style={[styles.row, styles.pageLink]}>
+            <Pressable style={[styles.row, styles.pageLink]} >
                 <Text style={styles.linkFont}>Logout</Text>
             </Pressable>
         </ScrollView>
       
     )
 }
+
 
 const styles = StyleSheet.create({
    row: {

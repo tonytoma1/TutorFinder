@@ -27,4 +27,12 @@ const tutorRules = [
     check('price').exists().isNumeric()
 ]
 
-module.exports = {accountRules, loginRules, studentRules, tutorRules}
+const updateTutorRules = [
+    check('email').exists().isEmail().normalizeEmail(),
+    check('firstName').exists().isString(),
+    check('lastName').exists().isString(),
+    check('price').exists().isNumeric(),
+    check('description').exists().isString()
+]
+
+module.exports = {accountRules, loginRules, studentRules, tutorRules, updateTutorRules}

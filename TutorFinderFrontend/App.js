@@ -13,6 +13,7 @@ import ConversationList from './pages/ConversationList';
 import PrivateChatLog from './pages/PrivateChatLog';
 import {Register} from './pages/Register'
 import {Settings} from './pages/Settings'
+import {EditProfile} from './pages/EditProfile';
 import { ConversationProvider, useConversationContext } from './context/ConversationContext';
 
 const Stack = createNativeStackNavigator();
@@ -37,8 +38,17 @@ const App = () => {
       }>
           <Tab.Screen name="Tutor" component={TutorList} initialParams={{socket: socket}} />
           <Tab.Screen name="Conversations" initialParams={{socket: socket}} component={ConversationList}/>
-          <Tab.Screen name="Settings" component={Settings}/>
+          <Tab.Screen name="Settings" component={SettingsTab}/>
       </Tab.Navigator>
+    )
+  }
+
+  const SettingsTab = () => {
+    return (
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Settings" component={Settings}></Stack.Screen>
+        <Stack.Screen name="EditProfile" component={EditProfile}></Stack.Screen>
+      </Stack.Navigator>
     )
   }
 

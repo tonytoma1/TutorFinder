@@ -1,4 +1,9 @@
 -- Incomplete
+
+add a updatePassword function for the backend
+
+Change socket.io to make the profile id as the chat room login instead of the email because emails change
+
 Conversations list doesn't update when a new chat is created. Also conversation list doesn't appear sometimes upon load up
 Try emitting a message to the backend to pull the conversation list for the user instead of sending the conversation list upon login
 
@@ -12,6 +17,7 @@ Screen loads twice upon login (it loads the tutor list and the conversation list
 Filter by types, price, ratings 
 
 -- complete
+Completed update tutor account for the backend
 Create profile page to view user profile
 Display Login page error message (incorrect email or password)
 

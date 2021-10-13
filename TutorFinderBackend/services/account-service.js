@@ -2,6 +2,16 @@ const Account = require('../models/account');
 const Student = require('../models/student');
 const Tutor = require('../models/tutor');
 const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
+let cloudinary = require('cloudinary').v2;
+require('dotenv').config()
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true
+});
 
 async function createStudentAccount(email, password, firstName, lastName) {
     const student = new Student({
@@ -68,4 +78,70 @@ async function getAllTutors() {
     return tutors;
 }
 
-module.exports = {login, createStudentAccount, createTutorAccount, getAllTutors}
+async function uploadImageToCloudinary(imageUrl) {
+    let uploadedImage = undefined;
+
+    try {
+        
+        let image = await cloudinary.uploader.upload(imageUrl);
+        uploadedImage = image.secure_url;
+    }
+    catch(error) {
+      
+    }
+
+    return uploadedImage;
+   
+}
+
+async function updateAccount(accountId, profileImageUrl, firstName, lastName, email) {
+    let accountUpdated = false
+    let image = await uploadImageToCloudinary(profileImageUrl);
+    let updatedInformation = {
+        profilePicture: image,
+        firstName: firstName,
+        lastName: lastName,
+        email: email
+    }
+    
+    try {
+        let account = await Account.findByIdAndUpdate(accountId, updatedInformation, {new: true})
+        accountUpdated = true;
+    }
+    catch(e) {
+       
+    }
+    return accountUpdated;
+}
+
+async function updateTutorAccount(accountId, firstName, lastName, email, subjectsTaught, price, jobTitle, description) {
+    let accountUpdated = false;
+    let savedAccount = undefined;
+    
+    try {
+        let account = await Account.findById(accountId)
+        let tutorAccount = await Tutor.findById(account.accountType._id);
+    
+        account.email = email
+        account.firstName = firstName;
+        account.lastName = lastName;
+        account.subjectsTaught = subjectsTaught;
+        tutorAccount.price = price;
+        tutorAccount.jobTitle = jobTitle;
+        tutorAccount.description = description;
+    
+        savedAccount = await account.save();
+        await tutorAccount.save();
+        accountUpdated = true;
+    }
+    catch(error) {
+        let i = error;
+    }
+   
+   
+    return {accountUpdated: accountUpdated, account: savedAccount};
+}
+
+
+module.exports = {login, createStudentAccount, createTutorAccount, getAllTutors, uploadImageToCloudinary, updateAccount,
+    updateTutorAccount}

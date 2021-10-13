@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
-const {loginRules, tutorRules, studentRules} = require('../middleware/account-middleware');
+const {loginRules, tutorRules, studentRules, updateTutorRules} = require('../middleware/account-middleware');
 const validate = require('../middleware/validate');
-const {login, createStudentAccount, createTutorAccount} = require('../services/account-service');
+const {login, createStudentAccount, createTutorAccount, updateTutorAccount} = require('../services/account-service');
 const jwt = require('jsonwebtoken');
 const {generateAccessAndRefreshTokens} = require('../services/jwt-service');
 
@@ -68,5 +68,15 @@ router.post('/register-tutor', tutorRules, validate, async (req, res, next) => {
   }
 })
  
+// update a tutor's account
+router.post('/update-tutor-account', updateTutorRules, validate, async (req, res, next) => {
+  try {
+    let response = await updateTutorAccount();
+  }
+  catch(error) {
+
+  }
+})
+
 
 module.exports = router;
