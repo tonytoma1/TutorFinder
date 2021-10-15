@@ -5,6 +5,7 @@ const validate = require('../middleware/validate');
 const {login, createStudentAccount, createTutorAccount, updateTutorAccount} = require('../services/account-service');
 const jwt = require('jsonwebtoken');
 const {generateAccessAndRefreshTokens} = require('../services/jwt-service');
+const Account = require('../models/account');
 
 const DUPLICATE_EMAIL_ERROR_CODE = 11000;
 
@@ -70,12 +71,25 @@ router.post('/register-tutor', tutorRules, validate, async (req, res, next) => {
  
 // update a tutor's account
 router.post('/update-tutor-account', updateTutorRules, validate, async (req, res, next) => {
-  try {
-    let response = await updateTutorAccount();
-  }
-  catch(error) {
+    let response = await updateTutorAccount(req.body.accountId, req.body.firstName, req.body.lastName,
+                    req.body.email, req.body.subjects, req.body.price, req.body.jobTitle, 
+                    req.body.description);
 
-  }
+    if(response.accountUpdated) {
+      response.account = await Account.findById(response.account.id).populate('accountType' , '-password');
+
+      return res.status(200).json({response: 'Account updated', savedAccount: response.account});
+
+    }
+    else {
+      let error = "";
+      if(response.error.code == DUPLICATE_EMAIL_ERROR_CODE ) {
+        error = "Email already in use";
+      }
+      
+      return res.status(400).json({response: 'Update Unsuccessful', error: error});
+
+    }
 })
 
 

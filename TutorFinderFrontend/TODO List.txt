@@ -13,7 +13,7 @@ Change date format for chats
 Create loading icon/splash screen
 Screen loads twice upon login (it loads the tutor list and the conversation list)
 
--- Polish List
+-- polish list
 Filter by types, price, ratings 
 
 -- complete

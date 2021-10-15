@@ -1,12 +1,13 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {Text, ScrollView, TextInput, View, StyleSheet, Image, Pressable, Modal} from 'react-native';
+import {Text, ScrollView, TextInput, View, StyleSheet, Image, Pressable, Modal,
+Alert} from 'react-native';
 import {useAccountContext} from '../context/AccountContext';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {axios} from 'axios';
+import axios from 'axios';
 import { API_URL } from  "@env";
 
-function EditTutorProfile({navigation}) {
+function EditTutorProfile({navigation, loading, setLoading}) {
     const [account, setAccount] = useAccountContext();
     const [email, setEmail] = useState('')
     const [firstName, setFirstName] = useState('')
@@ -32,15 +33,46 @@ function EditTutorProfile({navigation}) {
         setSubjects(account.accountType.subjects);
     }, [])
 
-    const updateAccount = async () => {
-        let updatedInformation = {
-            accountId: account.id,
-            email: email,
-            firstName: firstName,
-            lastName: lastName,
-            price: price,
-            description: description,
+    const displayAlert = (message, errorMessage) => {
+        Alert.alert(message, errorMessage,
+        [{text: 'Ok'}])
+    }
 
+
+    const updateAccount = async () => {
+        setShowModal(false);
+        setLoading(true)
+        let response
+        let message = "";
+        let errorMessage = ""
+        try {
+            let updatedInformation = {
+                accountId: account._id,
+                email: email,
+                firstName: firstName,
+                lastName: lastName,
+                price: price,
+                description: description,
+                jobTitle: jobTitle,
+                subjects: subjects
+            }
+            let updateUrl = API_URL + 'api/account/update-tutor-account'
+            let result = await axios.post(updateUrl, updatedInformation)
+            response = result;
+        }
+        catch(error) {
+            response = error
+        }
+        finally {
+            setLoading(false)
+            if(response.status == 200) {
+                message = "Update Successful"
+            }
+            else {
+                message = "Update Failed. Please Try Again"
+                errorMessage = response.data.error;
+            }
+            displayAlert(message, errorMessage)
         }
     }
 
@@ -64,13 +96,13 @@ function EditTutorProfile({navigation}) {
     const DisplayModal = ({showModal, setShowModal}) => {
         return (
             <Modal visible={showModal} animationType='slide'>
-                <View>
+                <View style={styles.modalContainer}>
                     <Text>Are you sure you want to Update your profile?</Text>
-                    <Pressable style={styles.updateButton}>
-                        <Text>Update</Text>
+                    <Pressable style={[styles.updateButton, styles.modalButton]} onPress={async () => { await updateAccount()}}>
+                        <Text style={[styles.modalText]}>Update</Text>
                     </Pressable>
-                    <Pressable style={styles.cancelButton} onPress={() => {setShowModal(false)}}>
-                        <Text>Cancel</Text>
+                    <Pressable style={[styles.cancelButton, styles.modalButton]} onPress={() => {setShowModal(false)}}>
+                        <Text style={[styles.modalText]}>Cancel</Text>
                     </Pressable>
                 </View>
             </Modal>
@@ -236,8 +268,21 @@ const styles = StyleSheet.create({
     subjectContainer: {
         marginBottom: 10,
     },
- 
-
+    modalContainer: {
+        marginTop: 'auto',
+        marginBottom: 'auto',
+        marginLeft: 'auto',
+        marginRight: 'auto'
+    },
+    modalButton: {
+        width: 200,
+        marginTop: 10
+    },
+    modalText: {
+        textAlign: 'center',
+        marginTop: 'auto',
+        marginBottom: 'auto'
+    }
  
 })
 

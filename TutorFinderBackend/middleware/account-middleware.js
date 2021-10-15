@@ -32,7 +32,8 @@ const updateTutorRules = [
     check('firstName').exists().isString(),
     check('lastName').exists().isString(),
     check('price').exists().isNumeric(),
-    check('description').exists().isString()
+    check('jobTitle').exists().isString(),
+    check('subjects').exists().isArray()
 ]
 
 module.exports = {accountRules, loginRules, studentRules, tutorRules, updateTutorRules}

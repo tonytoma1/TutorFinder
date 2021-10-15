@@ -117,6 +117,7 @@ async function updateAccount(accountId, profileImageUrl, firstName, lastName, em
 async function updateTutorAccount(accountId, firstName, lastName, email, subjectsTaught, price, jobTitle, description) {
     let accountUpdated = false;
     let savedAccount = undefined;
+    let error = undefined;
     
     try {
         let account = await Account.findById(accountId)
@@ -134,12 +135,12 @@ async function updateTutorAccount(accountId, firstName, lastName, email, subject
         await tutorAccount.save();
         accountUpdated = true;
     }
-    catch(error) {
-        let i = error;
+    catch(err) {
+        error = err;
     }
    
    
-    return {accountUpdated: accountUpdated, account: savedAccount};
+    return {accountUpdated: accountUpdated, account: savedAccount, error: error};
 }
 
 
