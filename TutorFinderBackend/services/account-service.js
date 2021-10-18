@@ -94,24 +94,25 @@ async function uploadImageToCloudinary(imageUrl) {
    
 }
 
-async function updateAccount(accountId, profileImageUrl, firstName, lastName, email) {
+async function updateAccount(accountId, firstName, lastName, email) {
     let accountUpdated = false
-    let image = await uploadImageToCloudinary(profileImageUrl);
+    let account = undefined; 
+    let error = undefined;
+
     let updatedInformation = {
-        profilePicture: image,
         firstName: firstName,
         lastName: lastName,
         email: email
     }
     
     try {
-        let account = await Account.findByIdAndUpdate(accountId, updatedInformation, {new: true})
+        account = await Account.findByIdAndUpdate(accountId, updatedInformation, {new: true})
         accountUpdated = true;
     }
     catch(e) {
-       
+       error = e;
     }
-    return accountUpdated;
+    return {accountUpdated: accountUpdated, account: account, error: error};
 }
 
 async function updateTutorAccount(accountId, firstName, lastName, email, subjectsTaught, price, jobTitle, description) {

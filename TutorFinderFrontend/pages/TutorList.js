@@ -27,7 +27,7 @@ function TutorList ({route, navigation}) {
 
             // If the person that is logged in is a tutor, then remove them from the tutor
             // list so he can't see himself. 
-            if(account.onModel = TUTOR) {
+            if(account.onModel == TUTOR) {
                 setFilteredTutorList(removeLoggedInTutor(tutors.data.tutors));
             }
             else {

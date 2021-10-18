@@ -156,10 +156,9 @@ describe('Update account', () => {
         let firstName = 'tom'
         let lastName = "harry"
         let email = "updatedAccount@example.com"
-        let profileImageUrl = 'https://s3-us-west-2.amazonaws.com/uw-s3-cdn/wp-content/uploads/sites/6/2017/11/04133712/waterfall.jpg'
-        const result = await updateAccount(accountId, profileImageUrl, firstName, lastName, email)
+        const result = await updateAccount(accountId, firstName, lastName, email)
         
-        expect(result).toBeTruthy();
+        expect(result.accountUpdated).toBeTruthy();
     })
 
     it('given incorrect account id, updateAccount() return false', async () => {
@@ -167,10 +166,9 @@ describe('Update account', () => {
         let firstName = 'tom'
         let lastName = "harry"
         let email = "newExample@example.com"
-        let profileImageUrl = 'https://s3-us-west-2.amazonaws.com/uw-s3-cdn/wp-content/uploads/sites/6/2017/11/04133712/waterfall.jpg'
-        const result = await updateAccount(accountId, profileImageUrl, firstName, lastName, email)
+        const result = await updateAccount(accountId, firstName, lastName, email)
 
-        expect(result).toBeFalsy();
+        expect(result.accountUpdated).toBeFalsy();
     })
 
     it('Given tutor information, updateTutorAccount() return updated tutor account', async () => {
@@ -180,7 +178,7 @@ describe('Update account', () => {
                                                20, "Accountant");
         expect(account.email).toBe('notUpdatedTutor@example.com');
 
-        let updateResult = await updateTutorAccount(account.id, profileImageUrl, "todd", "jones", 'updatedTutor@example.com', 
+        let updateResult = await updateTutorAccount(account.id, "todd", "jones", 'updatedTutor@example.com', 
                                                    subjectsTaught, 550, "CPA Accountant", "I have been an accountant for 30 years");
 
         expect(updateResult.account.email).toBe("updatedTutor@example.com")
@@ -218,14 +216,28 @@ describe('Update account', () => {
                                                 accountId: account.id,
                                                 firstName: "Jon",
                                                 lastName: 'Doe',
+                                                email: "notUpdatedTutor3@example.com" ,
                                                 price: 26,
-                                                title: 'Software Developer',
-                                                Description: 'I am a fully qualified developer'
+                                                jobTitle: 'Software Developer',
+                                                Description: 'I am a fully qualified developer',
+                                                subjects: subjectsTaught
                                             })
         expect(response.status).toBe(200)
     })
-
     
+})
+
+it('given student information, router.post("/update-student-account") return status 200', async () => {
+    let account = await createStudentAccount("new@student.com", "password", "Bob", "Jones");
+    
+    const response = await request(app).post('/api/account/update-student-account')
+                                        .send({
+                                            accountId: account._id,
+                                            firstName: 'Updated',
+                                            lastName: 'Student',
+                                            email: "new@student.com"
+                                        }); 
+    expect(response.status).toBe(200);
 })
 
 afterAll((done) => {

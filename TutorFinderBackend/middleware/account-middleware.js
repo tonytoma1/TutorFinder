@@ -36,4 +36,11 @@ const updateTutorRules = [
     check('subjects').exists().isArray()
 ]
 
-module.exports = {accountRules, loginRules, studentRules, tutorRules, updateTutorRules}
+const updateStudentRules = [
+    check('accountId').exists().isAlphanumeric(),
+    check('email').exists().isEmail().normalizeEmail(),
+    check('firstName').exists().isString(),
+    check('lastName').exists().isString(),
+]
+
+module.exports = {accountRules, loginRules, studentRules, tutorRules, updateTutorRules, updateStudentRules}

@@ -2,35 +2,28 @@ import React, {useEffect, useState, useRef} from 'react';
 import {Text, ScrollView, TextInput, View, StyleSheet, Image, Pressable, Modal,
 Alert} from 'react-native';
 import {useAccountContext} from '../context/AccountContext';
-import Icon from 'react-native-vector-icons/FontAwesome';
-
-import axios from 'axios';
+import Spinner from 'react-native-loading-spinner-overlay';
 import { API_URL } from  "@env";
+import axios from 'axios';
+import {EditProfilePicture} from '../components/EditProfilePicture';
 
-function EditTutorProfile({navigation, loading, setLoading}) {
+function EditStudentProfile() {
     const [account, setAccount] = useAccountContext();
     const [email, setEmail] = useState('')
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
-    const [price, setPrice] = useState('')
-    const [jobTitle, setJobTitle] = useState('') 
-    const [description, setDescription] = useState('');
     const [profilePicture, setProfilePicture] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [subjects, setSubjects] = useState([]);
     const [typedSubject, setTypedSubject] = useState('')
     const subjectInputRef = useRef();
-
 
     useEffect(() => {
         setProfilePicture(account.profilePicture);
         setEmail(account.email);
         setFirstName(account.firstName);
         setLastName(account.lastName);
-        setPrice(account.accountType.price);
-        setJobTitle(account.accountType.jobTitle);
-        setDescription(account.accountType.description);
-        setSubjects(account.accountType.subjects);
     }, [])
 
     const displayAlert = (message, errorMessage) => {
@@ -38,60 +31,37 @@ function EditTutorProfile({navigation, loading, setLoading}) {
         [{text: 'Ok'}])
     }
 
-
     const updateAccount = async () => {
         setShowModal(false);
-        setLoading(true)
-        let response
-        let message = "";
-        let errorMessage = ""
+        setLoading(true);
+        let message = ''
+        let errorMessage = '';
+        let updateUrl = API_URL + "api/account/update-student-account";
+
+        let updatedInformation = {
+            accountId: account._id,
+            email: email,
+            firstName: firstName,
+            lastName: lastName
+        }
+            
         try {
-            let updatedInformation = {
-                accountId: account._id,
-                email: email,
-                firstName: firstName,
-                lastName: lastName,
-                price: price,
-                description: description,
-                jobTitle: jobTitle,
-                subjects: subjects
-            }
-            let updateUrl = API_URL + 'api/account/update-tutor-account'
-            let result = await axios.post(updateUrl, updatedInformation)
-            response = result;
+            let response = await axios.post(updateUrl, updatedInformation);
+            setAccount(response.data.account);
+            message = "Account Updated Successfully"
         }
         catch(error) {
-            response = error
+            message = "Update Failed"
+            errorMessage = error.response.data.error;
+
         }
         finally {
-            setLoading(false)
-            if(response.status == 200) {
-                message = "Update Successful"
-            }
-            else {
-                message = "Update Failed. Please Try Again"
-                errorMessage = response.data.error;
-            }
-            displayAlert(message, errorMessage)
+            setLoading(false);
+            displayAlert(message, errorMessage);
         }
+        
     }
 
-    const addSubject = (value) => {
-        if(typedSubject) {
-            let taughtSubjects = subjects;
-            taughtSubjects.push(typedSubject);
-            setTypedSubject('');
-            setSubjects(subjects);
-            subjectInputRef.current.clear();    
-            }
-    
-        }
-
-    const removeSubjects = (index) => {
-        let taughtSubjects = [...subjects]
-        taughtSubjects.splice(index, 1);
-        setSubjects(taughtSubjects);
-    }
 
     const DisplayModal = ({showModal, setShowModal}) => {
         return (
@@ -108,16 +78,14 @@ function EditTutorProfile({navigation, loading, setLoading}) {
             </Modal>
         )
     }
-
     return (
         <ScrollView style={styles.container}>
+            <Spinner visible={loading} />
 
             <DisplayModal showModal={showModal} setShowModal={setShowModal}/>
 
-            <View style={[styles.row]}>
-                <Image style={[styles.profilePicture]} source={{uri: profilePicture}}/>
-                
-            </View>
+            <EditProfilePicture/>
+            
             <View style={[styles.row,styles.inputContainer]}>
                 <Text style={[styles.label]}>Email</Text>
                 <TextInput style={[styles.input]} defaultValue={email} onChangeText={val => setEmail(val)}/>
@@ -130,42 +98,7 @@ function EditTutorProfile({navigation, loading, setLoading}) {
                 <Text style={[styles.label]}>Last Name</Text>
                 <TextInput style={[styles.input]} defaultValue={lastName} onChangeText={val => setLastName(val)}/>
             </View>
-            <View style={[styles.row,styles.inputContainer]}>
-                <Text style={[styles.label]}>Price / hr</Text>
-                <TextInput style={[styles.input]} defaultValue={price.toString()} onChangeText={val => setPrice(val)}
-                 keyboardType="numeric"/>
-            </View>
-            <View style={[styles.row,styles.inputContainer]}>
-                <Text style={[styles.label]}>Title</Text>
-                <TextInput style={[styles.input]} defaultValue={jobTitle} onChangeText={val => setJobTitle(val)}/>
-            </View>
-            <View style={[styles.row,styles.inputContainer]}>
-                <Text style={[styles.label]}>Description</Text>
-                <TextInput style={[styles.input]} multiline={true} onChangeText={val => setDescription(val)}
-                defaultValue={description}/>
-            </View>
-            <View style={[styles.row, styles.inputContainer, styles.subjectInputContainer]}>
-                <Text style={[styles.label]}>Subjects</Text>
-                <TextInput style={[styles.input]} onChangeText={val => {setTypedSubject(val)}}
-                onBlur={() => {addSubject()}} ref={subjectInputRef}/>
-            </View>
-            <View style={[styles.row, styles.subjectContainer]}>
-                <Text style={styles.label}></Text>
-                    <View style={styles.subjectTaughtContainer}> 
-                    {subjects.map((element, index) => {
-                        return (
-                            <View style={[styles.subjectSelected, styles.row]}>
-                                <Text style={styles.subjectText}>{element}</Text>
-                                <Pressable key={index} onPress={() => { removeSubjects(index) }} >
-                                        <Icon name="times-circle" size={20} color="grey" />
-                                </Pressable>
-                            </View>
 
-                        )
-                    })}
-                    </View>
-             
-            </View>
             <View style={styles.row}>
                 <Pressable style={styles.updateButton} onPress={() => {setShowModal(true)}}>
                     <Text style={styles.updateButtonText}>Update Profile</Text>
@@ -180,6 +113,7 @@ function EditTutorProfile({navigation, loading, setLoading}) {
         
     )
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -286,5 +220,4 @@ const styles = StyleSheet.create({
  
 })
 
-
-module.exports = {EditTutorProfile}
+module.exports = {EditStudentProfile}

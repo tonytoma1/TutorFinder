@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
-const {loginRules, tutorRules, studentRules, updateTutorRules} = require('../middleware/account-middleware');
+const {loginRules, tutorRules, studentRules, updateTutorRules, updateStudentRules} = require('../middleware/account-middleware');
 const validate = require('../middleware/validate');
-const {login, createStudentAccount, createTutorAccount, updateTutorAccount} = require('../services/account-service');
+const {login, createStudentAccount, createTutorAccount, updateTutorAccount, 
+  updateAccount} = require('../services/account-service');
 const jwt = require('jsonwebtoken');
 const {generateAccessAndRefreshTokens} = require('../services/jwt-service');
 const Account = require('../models/account');
@@ -89,6 +90,23 @@ router.post('/update-tutor-account', updateTutorRules, validate, async (req, res
       
       return res.status(400).json({response: 'Update Unsuccessful', error: error});
 
+    }
+})
+
+router.post('/update-student-account', updateStudentRules, validate, async (req, res, next) => {
+    let response = await updateAccount(req.body.accountId, req.body.firstName, req.body.lastName,
+                                       req.body.email);
+    if(response.accountUpdated) {
+      let account = await Account.findById(response.account._id).populate('accountType' , '-password');
+      return res.status(200).json({account: account})
+    }
+    else {
+      let error = "";
+      if(response.error.code == DUPLICATE_EMAIL_ERROR_CODE ) {
+        error = "Email already in use";
+      }
+
+      return res.status(400).json({account: undefined, error: error});
     }
 })
 

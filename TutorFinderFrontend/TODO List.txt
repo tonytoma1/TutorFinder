@@ -1,5 +1,5 @@
 -- Incomplete
-
+Finish the update student profile page (add updating functionality)
 add a updatePassword function for the backend
 
 Change socket.io to make the profile id as the chat room login instead of the email because emails change
