@@ -1,12 +1,21 @@
 var express = require('express');
 var router = express.Router();
-const {loginRules, tutorRules, studentRules, updateTutorRules, updateStudentRules} = require('../middleware/account-middleware');
+const {loginRules, tutorRules, studentRules, updateTutorRules, updateStudentRules,
+  validateProfilePicture} = require('../middleware/account-middleware');
 const validate = require('../middleware/validate');
 const {login, createStudentAccount, createTutorAccount, updateTutorAccount, 
-  updateAccount} = require('../services/account-service');
+  updateAccount, uploadImageToCloudinary, updateProfilePicture} = require('../services/account-service');
 const jwt = require('jsonwebtoken');
-const {generateAccessAndRefreshTokens} = require('../services/jwt-service');
+const {generateAccessAndRefreshTokens, validateAccessToken, decodeAccessToken} = require('../services/jwt-service');
 const Account = require('../models/account');
+const multer  = require('multer')
+
+const TEN_MEGABYTES = 10485760;
+
+const upload = multer({limits: {
+  fileSize: TEN_MEGABYTES
+}});
+
 
 const DUPLICATE_EMAIL_ERROR_CODE = 11000;
 
@@ -14,9 +23,9 @@ const DUPLICATE_EMAIL_ERROR_CODE = 11000;
 router.post('/login', loginRules, validate, async (req, res, next) =>  {
   try {
     let account = await login(req.body.email, req.body.password);
-    const refreshToken = jwt.sign({email: account.email}, process.env.REFRESH_TOKEN_SECRET_KEY,
+    const refreshToken = jwt.sign({email: account.email, accountId: account.id}, process.env.REFRESH_TOKEN_SECRET_KEY,
                                   {expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME});
-    const accessToken = jwt.sign({email: account.email}, process.env.ACCESS_TOKEN_SECRET_KEY,
+    const accessToken = jwt.sign({email: account.email,  accountId: account.id}, process.env.ACCESS_TOKEN_SECRET_KEY,
                                 {expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME});
     res.cookie("refresh_token", refreshToken, {httpOnly: true});
     res.cookie("access_token", accessToken, {httpOnly: true});
@@ -33,7 +42,7 @@ router.post('/login', loginRules, validate, async (req, res, next) =>  {
 router.post('/register-student', studentRules, validate, async (req, res, next) => {
   try {
     const studentAccount = await createStudentAccount(req.body.email, req.body.password, req.body.firstName, req.body.lastName);
-    const tokens = generateAccessAndRefreshTokens(studentAccount.email);
+    const tokens = generateAccessAndRefreshTokens(studentAccount.email, studentAccount.id);
     res.cookie("refresh_token", tokens.refreshToken, {httpOnly: true});
     res.cookie("access_token", tokens.accessToken, {httpOnly: true});
     return res.status(200).json({response: 'account created'});
@@ -55,7 +64,7 @@ router.post('/register-tutor', tutorRules, validate, async (req, res, next) => {
     const tutorAccount = await createTutorAccount(req.body.email, req.body.password, req.body.firstName,
                                                   req.body.lastName, req.body.subjects, req.body.price,
                                                   req.body.jobTitle);
-    const tokens = generateAccessAndRefreshTokens(tutorAccount.email);
+    const tokens = generateAccessAndRefreshTokens(tutorAccount.email, tutorAccount.id);
     res.cookie("refresh_token", tokens.refreshToken, {httpOnly: true});
     res.cookie("access_token", tokens.accessToken, {httpOnly: true});
     return res.status(200).json({response: 'account created'});
@@ -110,5 +119,30 @@ router.post('/update-student-account', updateStudentRules, validate, async (req,
     }
 })
 
+router.post('/upload-profile-picture', validateAccessToken, upload.single('profile_picture'), validateProfilePicture,
+  decodeAccessToken, async (req, res, next) => {      
+      try {
+        let uploadedImage = await uploadImageToCloudinary(req.file.profile_picture);
+        if(!uploadedImage) {
+          throw 'Invalid image'
+        }
+
+        let result = await updateProfilePicture(req.access_token.accountId, uploadedImage);
+
+        if(!result.accountUpdated) {
+          throw 'account not updated'
+        }
+
+        return res.status(200).json(result);
+        
+      }
+      catch(error) {
+        return res.status(400).send({error: error});
+      }
+  })
+
+router.post('/test-jwt', validateAccessToken, (req, res, next) => {
+  return res.send(200);
+})
 
 module.exports = router;

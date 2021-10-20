@@ -1,5 +1,7 @@
 -- Incomplete
-Finish the update student profile page (add updating functionality)
+Finish the test case for uploading picture to route in backend.
+add upload profile picture from frontend to backend.
+
 add a updatePassword function for the backend
 
 Change socket.io to make the profile id as the chat room login instead of the email because emails change
@@ -7,11 +9,9 @@ Change socket.io to make the profile id as the chat room login instead of the em
 Conversations list doesn't update when a new chat is created. Also conversation list doesn't appear sometimes upon load up
 Try emitting a message to the backend to pull the conversation list for the user instead of sending the conversation list upon login
 
-Add Edit Profile page
 Add signout button
 Change date format for chats
 Create loading icon/splash screen
-Screen loads twice upon login (it loads the tutor list and the conversation list)
 
 -- polish list
 Filter by types, price, ratings 

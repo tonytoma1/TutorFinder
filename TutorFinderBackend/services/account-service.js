@@ -145,5 +145,23 @@ async function updateTutorAccount(accountId, firstName, lastName, email, subject
 }
 
 
+async function updateProfilePicture(accountId, profilePictureUrl) {
+    let accountUpdated = false;
+    let savedAccount = undefined;
+
+    if(profilePictureUrl && accountId) {
+        try {
+            let account = await Account.findById(accountId);
+            account.profilePicture = profilePictureUrl;
+            savedAccount = await account.save();
+            accountUpdated = true;
+        }
+        catch(error) {
+        }    
+    }
+
+    return {accountUpdated: accountUpdated, savedAccount: savedAccount}
+}
+
 module.exports = {login, createStudentAccount, createTutorAccount, getAllTutors, uploadImageToCloudinary, updateAccount,
-    updateTutorAccount}
+    updateTutorAccount, updateProfilePicture}

@@ -1,5 +1,5 @@
 const {login, createStudentAccount, createTutorAccount, getAllTutors, uploadImageToCloudinary,
-    updateAccount, updateTutorAccount} = require('../services/account-service');
+    updateAccount, updateTutorAccount, updateProfilePicture} = require('../services/account-service');
 var mongoose = require('mongoose');
 const Account = require('../models/account');
 const Tutor = require('../models/tutor');
@@ -7,6 +7,7 @@ const Student = require('../models/student');
 const request = require('supertest');
 const express = require('express');
 const app = require('../app');
+const cookie = require ('cookie');
 require('dotenv').config()
 
 beforeAll(async () => {
@@ -239,6 +240,77 @@ it('given student information, router.post("/update-student-account") return sta
                                         }); 
     expect(response.status).toBe(200);
 })
+
+// TODO Finish these test cases
+describe('Upload profile picture', () => {
+
+    it('Given a profile picture, updateProfilePicture() returns true with updated account', async () => {
+        let subjects = ['Math']
+        let createdAccount = await createStudentAccount('example10@example.com', 'password', 'John', 'Doe', subjects);
+        let profilePictureUrl = 'https://www.ranchandfarmproperties.com/uploads/blogs/29517/pexels-photo-129539__large.jpg'
+        let account = await updateProfilePicture(createdAccount.id, profilePictureUrl)
+        expect(account.accountUpdated).toBeTruthy();
+        expect(account.savedAccount).toBeTruthy();
+    })
+    it('Given a empty picture url, updateProfilePicture() returns false', async () => {
+        let subjects = ['Math']
+        let createdAccount = await createStudentAccount('example11@example.com', 'password', 'John', 'Doe', subjects);
+        let profilePictureUrl = ''
+        let account = await updateProfilePicture(createdAccount.id, profilePictureUrl)
+        expect(account.accountUpdated).toBeFalsy();
+        expect(account.savedAccount).toBeFalsy();
+    })
+
+    it('Given a profile picture, router.post("/upload-profile-picture") successfully uploads image', async () => {
+        
+        const subjects = ['math'];
+        let createdAccount = await createStudentAccount('example4@example.com', 'password', 'John', 'Doe', subjects);
+        
+        // login
+        const response = await request(app)
+        .post('/api/account/login')
+        .send({
+            email: createdAccount.email,
+            password: 'password'
+        });
+
+        let tokens = {...cookie.parse(response.headers['set-cookie'][0]), ...cookie.parse(response.headers['set-cookie'][1])}
+
+        let profilePicture = './test_images/land.jpg';
+        const uploadResponse = await request(app)
+                                .post('/api/account/upload-profile-picture')
+                                .attach('profile_picture', profilePicture)
+                                .set('Authorization', 'Bearer ' + tokens.access_token);
+
+        expect(uploadResponse.status).toBe(200);
+        expect(uploadResponse.body.account).toBeTruthy();
+        expect(uploadResponse.body.account.email).toBe(createdAccount.email);
+
+    })    
+
+    it('Given no profile picture, router.post("/api/account/upload-profile-picture"), should return status 400', async () => {
+        const subjects = ['math'];
+        let createdAccount = await createStudentAccount('example5@example.com', 'password', 'John', 'Doe', subjects);
+        
+        // login
+        const response = await request(app)
+        .post('/api/account/login')
+        .send({
+            email: createdAccount.email,
+            password: 'password'
+        });
+
+        let tokens = {...cookie.parse(response.headers['set-cookie'][0]), ...cookie.parse(response.headers['set-cookie'][1])}
+
+        const uploadResponse = await request(app)
+                                .post('/api/account/upload-profile-picture')
+                                .set('Authorization', 'Bearer ' + tokens.access_token);
+
+        expect(uploadResponse.status).toBe(400);
+        
+    })
+})
+
 
 afterAll((done) => {
     mongoose.connection.close();

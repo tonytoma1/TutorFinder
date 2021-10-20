@@ -43,4 +43,15 @@ const updateStudentRules = [
     check('lastName').exists().isString(),
 ]
 
-module.exports = {accountRules, loginRules, studentRules, tutorRules, updateTutorRules, updateStudentRules}
+const validateProfilePicture = (req, res, next) => {
+    if(req.file) {
+        if(req.file.profile_picture) {
+           return next();
+        }
+    }
+    
+    return res.sendStatus(400);
+    
+}
+
+module.exports = {accountRules, loginRules, studentRules, tutorRules, updateTutorRules, updateStudentRules, validateProfilePicture}

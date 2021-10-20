@@ -9,6 +9,7 @@ require('dotenv').config()
 
 var accountRouter = require('./routes/account-router');
 var tutorRouter = require('./routes/tutor-router');
+const jwtRouter = require('./routes/jwt-router');
 
 var app = express();
 app.use(cors());
@@ -43,6 +44,7 @@ app.use(cookieParser());
 // routes
 app.use('/api/account', accountRouter);
 app.use('/api/tutor', tutorRouter);
+app.use('/api/jwt', jwtRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
