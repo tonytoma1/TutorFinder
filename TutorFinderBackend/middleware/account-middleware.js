@@ -45,7 +45,7 @@ const updateStudentRules = [
 
 const validateProfilePicture = (req, res, next) => {
     if(req.file) {
-        if(req.file.profile_picture) {
+        if(req.file.fieldname == 'profile_picture') {
            return next();
         }
     }

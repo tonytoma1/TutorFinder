@@ -9,12 +9,20 @@ const jwt = require('jsonwebtoken');
 const {generateAccessAndRefreshTokens, validateAccessToken, decodeAccessToken} = require('../services/jwt-service');
 const Account = require('../models/account');
 const multer  = require('multer')
+const fs = require('fs');
 
 const TEN_MEGABYTES = 10485760;
 
-const upload = multer({limits: {
-  fileSize: TEN_MEGABYTES
-}});
+const storage = multer.diskStorage({
+  dest: 'uploads/', 
+  limits: {
+    fileSize: TEN_MEGABYTES
+  }, 
+  filename(req, file, callback) { 
+    callback(null, `${file.fieldname}_${Date.now()}_${file.originalname}`)
+  }});
+
+const upload = multer({storage});
 
 
 const DUPLICATE_EMAIL_ERROR_CODE = 11000;
@@ -119,22 +127,28 @@ router.post('/update-student-account', updateStudentRules, validate, async (req,
     }
 })
 
+// Updates a user's profile picture.
 router.post('/upload-profile-picture', validateAccessToken, upload.single('profile_picture'), validateProfilePicture,
   decodeAccessToken, async (req, res, next) => {      
       try {
-        let uploadedImage = await uploadImageToCloudinary(req.file.profile_picture);
-        if(!uploadedImage) {
-          throw 'Invalid image'
-        }
+          // Upload image to the cloud database
+          let uploadedImage = await uploadImageToCloudinary(req.file.path);
+          if(!uploadedImage) {
+            throw 'Invalid image'
+          }
+          
+          // Update the user's profile picture
+          let result = await updateProfilePicture(req.access_token.accountId, uploadedImage);
 
-        let result = await updateProfilePicture(req.access_token.accountId, uploadedImage);
+          if(!result.accountUpdated) {
+            throw 'account not updated'
+          }
 
-        if(!result.accountUpdated) {
-          throw 'account not updated'
-        }
+          // Delete the image from disk storage since the image is already uploaded to the database
+          fs.unlink(req.file.path, (error) => {
 
-        return res.status(200).json(result);
-        
+          })
+          return res.status(200).json(result);       
       }
       catch(error) {
         return res.status(400).send({error: error});

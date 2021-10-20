@@ -276,14 +276,14 @@ describe('Upload profile picture', () => {
 
         let tokens = {...cookie.parse(response.headers['set-cookie'][0]), ...cookie.parse(response.headers['set-cookie'][1])}
 
-        let profilePicture = './test_images/land.jpg';
+        let profilePicture = __dirname + "\\test_images\\land.jpg"
         const uploadResponse = await request(app)
                                 .post('/api/account/upload-profile-picture')
                                 .attach('profile_picture', profilePicture)
                                 .set('Authorization', 'Bearer ' + tokens.access_token);
 
         expect(uploadResponse.status).toBe(200);
-        expect(uploadResponse.body.account).toBeTruthy();
+        expect(uploadResponse.body.savedAccount).toBeTruthy();
         expect(uploadResponse.body.account.email).toBe(createdAccount.email);
 
     })    

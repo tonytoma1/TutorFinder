@@ -36,7 +36,7 @@ const validateAccessToken = (req, res, next) => {
 const decodeAccessToken = (req, res, next) => {
     const authenticationHeader = req.headers.authorization;
     const accessToken = authenticationHeader.split(' ')[1];
-    req.acess_token = jwt.decode(accessToken, process.env.ACCESS_TOKEN_SECRET_KEY);
+    req.access_token = jwt.decode(accessToken, process.env.ACCESS_TOKEN_SECRET_KEY);
     next();
 }
 
