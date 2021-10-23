@@ -7,7 +7,7 @@ import { API_URL } from  "@env";
 import axios from 'axios';
 import {EditProfilePicture} from '../components/EditProfilePicture';
 
-function EditStudentProfile() {
+function EditStudentProfile({navigation}) {
     const [account, setAccount] = useAccountContext();
     const [email, setEmail] = useState('')
     const [firstName, setFirstName] = useState('')

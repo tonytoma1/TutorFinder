@@ -1,15 +1,18 @@
 -- Incomplete
-Finish the test case for uploading picture to route in backend.
-add upload profile picture from frontend to backend.
+
 
 add a updatePassword function for the backend
 
 Change socket.io to make the profile id as the chat room login instead of the email because emails change
 
+keyboard overlaps input in the login screen
+
+add error in login page to display when backend isnt up/working/connected
+
 Conversations list doesn't update when a new chat is created. Also conversation list doesn't appear sometimes upon load up
 Try emitting a message to the backend to pull the conversation list for the user instead of sending the conversation list upon login
 
-Add signout button
+Add signout functionality
 Change date format for chats
 Create loading icon/splash screen
 
@@ -20,4 +23,6 @@ Filter by types, price, ratings
 Completed update tutor account for the backend
 Create profile page to view user profile
 Display Login page error message (incorrect email or password)
+Finish the test case for uploading picture to route in backend.
+add upload profile picture from frontend to backend.
 

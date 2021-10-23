@@ -1,9 +1,10 @@
 import NavigationBar from '../components/Header';
-import {View, Text, TextInput, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {View, Text, TextInput, StyleSheet, TouchableOpacity, Image,
+KeyboardAvoidingView} from 'react-native';
 import React from 'react';
 import {useState} from 'react'
 import axios from 'axios';
-import { API_URL } from  "@env";
+import { API_URL, REFRESH_TOKEN_STORAGE_KEY, ACCESS_TOKEN_STORAGE_KEY } from  "@env";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CookieManager from '@react-native-cookies/cookies';
 import {useAuthenticationContext} from '../AuthenticationContext';
@@ -69,8 +70,8 @@ const LoginPage = ({navigation, route}) => {
             let cookies = await CookieManager.get(API_URL);
             authentication.refreshToken = cookies.refresh_token.value;
             authentication.accessToken = cookies.access_token.value;
-            await AsyncStorage.setItem('tutor_app_refresh_token', authentication.refreshToken);
-            await AsyncStorage.setItem('tutor_app_access_token', authentication.accessToken);
+            await AsyncStorage.setItem(REFRESH_TOKEN_STORAGE_KEY, authentication.refreshToken);
+            await AsyncStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, authentication.accessToken);
 
             route.params.socket.auth.username = email;
             route.params.socket.connect();
@@ -98,6 +99,7 @@ const LoginPage = ({navigation, route}) => {
 
     return(
         <View style={styles.wrapper}>
+            <KeyboardAvoidingView>
             <Image style={styles.logo} source={require('../images/logo-large.png')} />
             {errorMessage.length != 0 ? <DisplayErrors/> : null}
             <Text style={styles.label}>Email</Text>
@@ -111,7 +113,7 @@ const LoginPage = ({navigation, route}) => {
             <Link style={styles.register} to={{screen: "Register"}}>
                 Don't have an account? Register here
             </Link>
-            
+            </KeyboardAvoidingView>
           
         </View>
     )

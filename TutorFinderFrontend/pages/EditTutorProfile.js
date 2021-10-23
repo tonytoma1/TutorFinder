@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Spinner from 'react-native-loading-spinner-overlay';
 import axios from 'axios';
 import { API_URL } from  "@env";
+import {EditProfilePicture} from '../components/EditProfilePicture';
 
 function EditTutorProfile({navigation}) {
     const [account, setAccount] = useAccountContext();
@@ -16,7 +17,6 @@ function EditTutorProfile({navigation}) {
     const [price, setPrice] = useState('')
     const [jobTitle, setJobTitle] = useState('') 
     const [description, setDescription] = useState('');
-    const [profilePicture, setProfilePicture] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [subjects, setSubjects] = useState([]);
     const [typedSubject, setTypedSubject] = useState('')
@@ -24,7 +24,6 @@ function EditTutorProfile({navigation}) {
 
 
     useEffect(() => {
-        setProfilePicture(account.profilePicture);
         setEmail(account.email);
         setFirstName(account.firstName);
         setLastName(account.lastName);
@@ -114,12 +113,10 @@ function EditTutorProfile({navigation}) {
         <ScrollView style={styles.container}>
             <Spinner visible={loading} />
             
+            <EditProfilePicture/>
+
             <DisplayModal showModal={showModal} setShowModal={setShowModal}/>
 
-            <View style={[styles.row]}>
-                <Image style={[styles.profilePicture]} source={{uri: profilePicture}}/>
-                
-            </View>
             <View style={[styles.row,styles.inputContainer]}>
                 <Text style={[styles.label]}>Email</Text>
                 <TextInput style={[styles.input]} defaultValue={email} onChangeText={val => setEmail(val)}/>

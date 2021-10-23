@@ -284,7 +284,7 @@ describe('Upload profile picture', () => {
 
         expect(uploadResponse.status).toBe(200);
         expect(uploadResponse.body.savedAccount).toBeTruthy();
-        expect(uploadResponse.body.account.email).toBe(createdAccount.email);
+        expect(uploadResponse.body.savedAccount.email).toBe(createdAccount.email);
 
     })    
 

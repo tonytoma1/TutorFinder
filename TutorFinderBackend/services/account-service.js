@@ -154,6 +154,7 @@ async function updateProfilePicture(accountId, profilePictureUrl) {
             let account = await Account.findById(accountId);
             account.profilePicture = profilePictureUrl;
             savedAccount = await account.save();
+            savedAccount = await Account.findById(savedAccount.id).populate('accountType');
             accountUpdated = true;
         }
         catch(error) {

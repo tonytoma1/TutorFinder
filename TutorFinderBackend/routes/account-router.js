@@ -134,14 +134,14 @@ router.post('/upload-profile-picture', validateAccessToken, upload.single('profi
           // Upload image to the cloud database
           let uploadedImage = await uploadImageToCloudinary(req.file.path);
           if(!uploadedImage) {
-            throw 'Invalid image'
+            throw 'invalid_image'
           }
           
           // Update the user's profile picture
           let result = await updateProfilePicture(req.access_token.accountId, uploadedImage);
 
           if(!result.accountUpdated) {
-            throw 'account not updated'
+            throw 'account_not_updated'
           }
 
           // Delete the image from disk storage since the image is already uploaded to the database
