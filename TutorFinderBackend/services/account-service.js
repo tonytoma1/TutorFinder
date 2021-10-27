@@ -164,5 +164,8 @@ async function updateProfilePicture(accountId, profilePictureUrl) {
     return {accountUpdated: accountUpdated, savedAccount: savedAccount}
 }
 
-module.exports = {login, createStudentAccount, createTutorAccount, getAllTutors, uploadImageToCloudinary, updateAccount,
-    updateTutorAccount, updateProfilePicture}
+
+
+module.exports = {login, createStudentAccount, createTutorAccount, getAllTutors, 
+                    uploadImageToCloudinary, updateAccount,
+                    updateTutorAccount, updateProfilePicture}

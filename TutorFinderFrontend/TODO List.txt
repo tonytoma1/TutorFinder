@@ -1,5 +1,5 @@
 -- Incomplete
-add a updatePassword function for the backend
+add a updatePassword function for the frontend
 
 Change socket.io to make the profile id as the chat room login instead of the email because emails change
 

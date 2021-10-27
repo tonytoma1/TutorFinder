@@ -1,6 +1,6 @@
 const {login, createStudentAccount, createTutorAccount, getAllTutors, uploadImageToCloudinary,
     updateAccount, updateTutorAccount, updateProfilePicture} = require('../services/account-service');
-const {sendEmail, generatePasswordPin, updatePasswordPin, sendUpdatePasswordRequest} = require('../services/email-service')
+const {sendEmail, generatePasswordPin, updatePasswordPin, sendUpdatePasswordRequest, comparePasswordPins} = require('../services/email-service')
 var mongoose = require('mongoose');
 const Account = require('../models/account');
 const Tutor = require('../models/tutor');
@@ -366,7 +366,27 @@ describe('update account password',  () => {
         
         let passwordResponse = await sendUpdatePasswordRequest(account.email);
         expect(passwordResponse.messageSent).toBeTruthy();
+    })
 
+    it('given a password pin, checkPasswordPin() compares pin based on account. return true', async () => {
+        let subjects = ['linear algebra', 'math', 'science'];
+        const account = await createStudentAccount('bobjones132323@gmail.com', 'password', 'John', 'Doe', subjects);
+        let passwordResponse = await sendUpdatePasswordRequest(account.email);
+        let result = await comparePasswordPins(account.email, passwordResponse.pin);
+        expect(result).toBeTruthy();
+    })
+
+    it('given email, router.post("/password-pin") generates password pin. return status 200', async () => {
+        let subjects = ['linear algebra', 'math', 'science'];
+        const account = await createStudentAccount('test@gmail.com', 'password', 'John', 'Doe', subjects);
+        const response = await request(app)
+                                .post('/api/account/password-pin/' + account.email);
+        expect(response.status).toBe(200);
+    })
+    it('given invalid email, router.post("/password-pin") returns status 400', async () => {      
+        const response = await request(app)
+        .post('/api/account/password-pin/lol' );
+        expect(response.status).toBe(400);
     })
 })
 

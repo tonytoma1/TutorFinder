@@ -1,10 +1,11 @@
 var express = require('express');
 var router = express.Router();
 const {loginRules, tutorRules, studentRules, updateTutorRules, updateStudentRules,
-  validateProfilePicture} = require('../middleware/account-middleware');
+  validateProfilePicture, requireParams} = require('../middleware/account-middleware');
 const validate = require('../middleware/validate');
 const {login, createStudentAccount, createTutorAccount, updateTutorAccount, 
   updateAccount, uploadImageToCloudinary, updateProfilePicture} = require('../services/account-service');
+const {sendUpdatePasswordRequest} = require('../services/email-service');
 const jwt = require('jsonwebtoken');
 const {generateAccessAndRefreshTokens, validateAccessToken, decodeAccessToken} = require('../services/jwt-service');
 const Account = require('../models/account');
@@ -154,6 +155,19 @@ router.post('/upload-profile-picture', validateAccessToken, upload.single('profi
         return res.status(400).send({error: error});
       }
   })
+
+router.post('/password-pin/:email', requireParams(['email']), async (req, res, next) => {
+    let result = await sendUpdatePasswordRequest(req.params.email);
+
+    if(result.messageSent) {
+      return res.status(200).json({message: 'Email Sent'});
+    }
+    else {
+      return res.status(400).json({error: result.error})
+    }
+ 
+})
+
 
 router.post('/test-jwt', validateAccessToken, (req, res, next) => {
   return res.send(200);

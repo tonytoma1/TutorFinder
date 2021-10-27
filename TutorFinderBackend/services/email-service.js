@@ -40,21 +40,28 @@ async function sendEmail(email, subject, message) {
 async function sendUpdatePasswordRequest(email) {
     let messageSent = false;
     let error = undefined;
+    let pin = undefined;
     try {
         // insert pin into account
-        let pin = generatePasswordPin(5);
-        await updatePasswordPin(email, pin);
+        pin = generatePasswordPin(5);
+        let passwordPinResult = await updatePasswordPin(email, pin);
+        if(!passwordPinResult.updated) {
+            return {messageSent: messageSent, error: passwordPinResult.error, pin: pin};
+        }
         // Send user an email about the password pin
         let message = "Your password reset pin is: " + pin;
         let subject = "Tutor App: Password Reset Code"
-        await sendEmail(email, subject, message);
+        let emailResult = await sendEmail(email, subject, message);
+        if(!emailResult.emailSuccessfullySent) {
+            return {messageSent: messageSent, error: emailResult.error, pin: pin};
+        }
         messageSent = true;
     }
     catch(err) {
         error = err;
     }
 
-    return {messageSent: messageSent, error: error};
+    return {messageSent: messageSent, error: error, pin: pin};
 
 }
 
@@ -81,9 +88,15 @@ async function updatePasswordPin(email, pin) {
 
     try {
         accountFound = await Account.findOne({email: email});
-        accountFound.passwordPin = pin;
-        account = await accountFound.save();
-        updated = true;
+        if(accountFound == null) {
+            error = 'Invalid email';
+        }
+        else {
+            accountFound.passwordPin = pin;
+            account = await accountFound.save();
+            updated = true;
+        }
+        
     }
     catch(err) {
         error = err;
@@ -94,5 +107,20 @@ async function updatePasswordPin(email, pin) {
     return result;
 }
 
+async function comparePasswordPins(email, pin) {
+    let pinsMatch = false;
 
-module.exports = {sendEmail, generatePasswordPin, updatePasswordPin, sendUpdatePasswordRequest}
+    try {
+        const account = await Account.findOne({email: email});
+        if(account.passwordPin == pin) {
+            pinsMatch = true;
+        }
+    }
+    catch(error) {
+
+    }
+    return pinsMatch;
+}
+
+
+module.exports = {sendEmail, generatePasswordPin, updatePasswordPin, sendUpdatePasswordRequest, comparePasswordPins}

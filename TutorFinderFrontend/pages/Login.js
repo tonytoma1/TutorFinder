@@ -12,6 +12,7 @@ import Logo from '../components/Header';
 import {useAccountContext} from '../context/AccountContext';
 import { validate } from 'validate.js';
 import { Link } from '@react-navigation/native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const LoginPage = ({navigation, route}) => {
     const [email, setEmail] = useState();
@@ -98,7 +99,7 @@ const LoginPage = ({navigation, route}) => {
     }
 
     return(
-        <View style={styles.wrapper}>
+        <ScrollView style={styles.wrapper}>
             <KeyboardAvoidingView>
             <Image style={styles.logo} source={require('../images/logo-large.png')} />
             {errorMessage.length != 0 ? <DisplayErrors/> : null}
@@ -109,13 +110,20 @@ const LoginPage = ({navigation, route}) => {
             <TouchableOpacity title="Sign In" style={styles.button} onPress={loginButtonHandler}>
                 <Text style={styles.buttonText}>Sign In</Text>
             </TouchableOpacity>
-             {route.params.message ? <Text style={styles.successMessage}>{route.params.message}</Text> : null}
-            <Link style={styles.register} to={{screen: "Register"}}>
-                Don't have an account? Register here
+            
+            <Link style={[styles.register, styles.registerButton]} to={{screen: "Register"}}>
+                Register 
             </Link>
+
+
+             {route.params.message ? <Text style={styles.successMessage}>{route.params.message}</Text> : null}
+             <Link style={styles.forgotPassword} to={{screen: "RecoverAccount"}}>
+                Forgot password? 
+             </Link>
+           
             </KeyboardAvoidingView>
           
-        </View>
+        </ScrollView>
     )
 }
 
@@ -144,6 +152,15 @@ const styles = StyleSheet.create({
         marginLeft: 'auto',
         marginBottom: 20
     },
+    registerButton: {
+        width: '80%',
+        borderWidth: 1,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: 10,
+        borderColor: '#11C281',
+        padding: 10,
+    },
     button: {
         width: '80%',
         borderWidth: 1,
@@ -158,11 +175,16 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'white'
     },
+    forgotPassword: {
+        textAlign: 'center',
+        textDecorationLine: 'underline',
+        color: 'blue',
+        marginTop: 30
+    },
     register: {
         textAlign: 'center',
-        marginTop: 60,
-        textDecorationLine: 'underline',
-        color: 'blue'
+        marginTop: 30,
+        color: 'black'
     },
     successMessage: {
         textAlign: 'center',
