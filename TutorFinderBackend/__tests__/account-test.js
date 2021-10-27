@@ -1,5 +1,6 @@
 const {login, createStudentAccount, createTutorAccount, getAllTutors, uploadImageToCloudinary,
     updateAccount, updateTutorAccount, updateProfilePicture} = require('../services/account-service');
+const {sendEmail, generatePasswordPin, updatePasswordPin, sendUpdatePasswordRequest} = require('../services/email-service')
 var mongoose = require('mongoose');
 const Account = require('../models/account');
 const Tutor = require('../models/tutor');
@@ -308,6 +309,64 @@ describe('Upload profile picture', () => {
 
         expect(uploadResponse.status).toBe(400);
         
+    })
+})
+
+describe('update account password',  () => {
+
+    it('given an email, sendEmail() will return true', async () => {
+       
+        let response = await sendEmail("tonytoma5@outlook.com", "Password Reset", "Hello your reset code is");
+        expect(response.emailSuccessfullySent).toBeTruthy();
+    })
+
+    it('given an invalid email, sendEmail() will return false',  async () => {
+        let response = await sendEmail("lol");
+        expect(response.emailSuccessfullySent).toBeFalsy();
+    })
+
+    it('given an input of 5, generatePasswordPin() will return a random pin of 5 digits', () => {
+        let pin = generatePasswordPin(5);
+        expect(pin).toHaveLength(5);
+    })
+    it('given an input of 100, generatePasswordPin() will return a random pin of 100 digits', () => {
+        let pin = generatePasswordPin(100);
+        expect(pin).toHaveLength(100);
+    })
+
+    it('given a password pin, updatePasswordPin() inserts password pin into an account. returns true.', async () => {
+        let subjects = ['linear algebra', 'math', 'science'];
+        const account = await createStudentAccount('tutor@examplemail.com', 'password', 'John', 'Doe', subjects);
+        let pin = "12345"
+        let result = await updatePasswordPin(account.email, pin);
+        expect(result.updated).toBeTruthy;
+        expect(result.account.passwordPin).toMatch(pin);
+    })
+
+    it('given account that doesn\'t exist, updatePasswordPin()  returns false.', async () => {
+        let pin = "12345"
+        let result = await updatePasswordPin("lol", pin);
+        expect(result.updated).toBeFalsy()
+        expect(result.account).toBeFalsy();
+    })
+
+    it('given no pin, updatePasswordPin() returns false', async () => {
+        let subjects = ['linear algebra', 'math', 'science'];
+        const account = await createStudentAccount('tutor2@examplemail.com', 'password', 'John', 'Doe', subjects);
+
+        let result = await updatePasswordPin(account.email);
+        expect(result.updated).toBeFalsy();
+        expect(result.account).toBeFalsy();
+
+    })
+
+    it('given an email, sendUpdatePasswordRequest() sends an email with a password pin to the user', async () => {
+        let subjects = ['linear algebra', 'math', 'science'];
+        const account = await createStudentAccount('tonytoma5@outlook.com', 'password', 'John', 'Doe', subjects);
+        
+        let passwordResponse = await sendUpdatePasswordRequest(account.email);
+        expect(passwordResponse.messageSent).toBeTruthy();
+
     })
 })
 
