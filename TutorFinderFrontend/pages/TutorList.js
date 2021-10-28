@@ -90,7 +90,7 @@ function TutorList ({route, navigation}) {
                     <View style={styles.pageOptionsCol}>
                         <Pressable style={styles.filterButton} onPress={() => {setShowFilters(!showFilters)}}>
                             <Text style={[styles.textFilter]}>
-                                <Icon name="filter" color='#11C281' size={28}style={[styles.filter, styles.iconFilter]}/>
+                                <Icon name="filter" color='#11C281' size={24}style={[styles.filter, styles.iconFilter]}/>
                                 Filter
                             </Text>
                         </Pressable>
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end'
     },
     textFilter: {
-        fontSize: 17,
+        fontSize: 15,
         fontFamily: 'Montserrat',
         paddingLeft: 5,
         paddingRight: 5

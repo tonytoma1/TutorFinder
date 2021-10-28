@@ -35,9 +35,6 @@ export default function RecoverAccount({navigation}) {
         let result;
         try {
             result = await axios.post(url);
-            if(result.status == 200) {
-
-            }
         }
         catch(err) {
             result = 'Invalid email';
@@ -65,7 +62,7 @@ export default function RecoverAccount({navigation}) {
             result = await sendRecoveryCode();
             if(result.status == 200) {
                 setLoading(false);
-                navigation.navigate('PasswordPin');
+                navigation.navigate('PasswordPin', {email: email});
                 return;
             }
             else {
