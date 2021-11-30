@@ -5,6 +5,8 @@ Change socket.io to make the profile id as the chat room login instead of the em
 
 keyboard overlaps input in the login screen
 
+password recovery page: enter email is case sensitive and it shouldn't 
+
 add error in login page to display when backend isnt up/working/connected
 
 Conversations list doesn't update when a new chat is created. Also conversation list doesn't appear sometimes upon load up
@@ -13,6 +15,7 @@ Try emitting a message to the backend to pull the conversation list for the user
 Add signout functionality
 Change date format for chats
 Create loading icon/splash screen
+add ratings for tutors
 
 -- polish list
 Filter by types, price, ratings 

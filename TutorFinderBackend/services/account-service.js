@@ -4,6 +4,7 @@ const Tutor = require('../models/tutor');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 let cloudinary = require('cloudinary').v2;
+const emailService = require("./email-service");
 require('dotenv').config()
 
 cloudinary.config({
@@ -165,7 +166,33 @@ async function updateProfilePicture(accountId, profilePictureUrl) {
 }
 
 
+async function updateAccountPassword(email, pin, newPassword) {
+    let accountUpdated = false;
+
+    const account = await Account.findOne({email: email});
+    if (account == null) {
+        return accountUpdated;
+    }
+
+    let isPinCorrect = await emailService.comparePasswordPins(account.email, pin);
+    if(!isPinCorrect) {
+        return accountUpdated;
+    }
+
+    try {
+       const hashedPassword = bcrypt.hashSync(newPassword, 10);
+       account.password = hashedPassword;
+       await account.save();
+       accountUpdated = true;
+    }
+    catch(err) {
+    }
+
+    return accountUpdated;
+    
+}
+
 
 module.exports = {login, createStudentAccount, createTutorAccount, getAllTutors, 
                     uploadImageToCloudinary, updateAccount,
-                    updateTutorAccount, updateProfilePicture}
+                    updateTutorAccount, updateProfilePicture, updateAccountPassword}

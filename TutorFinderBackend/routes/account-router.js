@@ -4,8 +4,9 @@ const {loginRules, tutorRules, studentRules, updateTutorRules, updateStudentRule
   validateProfilePicture, requireParams} = require('../middleware/account-middleware');
 const validate = require('../middleware/validate');
 const {login, createStudentAccount, createTutorAccount, updateTutorAccount, 
-  updateAccount, uploadImageToCloudinary, updateProfilePicture} = require('../services/account-service');
-const {sendUpdatePasswordRequest} = require('../services/email-service');
+  updateAccount, uploadImageToCloudinary, updateProfilePicture, 
+  updateAccountPassword} = require('../services/account-service');
+const {sendUpdatePasswordRequest, comparePasswordPins} = require('../services/email-service');
 const jwt = require('jsonwebtoken');
 const {generateAccessAndRefreshTokens, validateAccessToken, decodeAccessToken} = require('../services/jwt-service');
 const Account = require('../models/account');
@@ -168,6 +169,25 @@ router.post('/password-pin/:email', requireParams(['email']), async (req, res, n
  
 })
 
+router.post("/password-pin/:email/:pin", requireParams(['email', 'pin']), async (req, res, next) => {
+    // check if the passwords pin match
+    const pinsMatch = await comparePasswordPins(req.params.email, req.params.pin);
+    // if they match then allow user to update their password
+    if(pinsMatch) {
+      return res.status(200).json({message: "pins_match"});
+    }
+    else {
+      return res.status(400).json({message: "incorrect pin"})
+    }
+  })
+
+router.put("/password/:email/:pin/:newPassword", requireParams(['email', 'pin']), async (req, res, next) => {
+    const accountUpdated = await updateAccountPassword(req.params.email, req.params.pin, req.params.newPassword);
+    if(accountUpdated)
+      return res.status(200).json({message: "Account Updated"});
+    else 
+      return res.status(400).json({message: "Updated Failed"});
+})
 
 router.post('/test-jwt', validateAccessToken, (req, res, next) => {
   return res.send(200);

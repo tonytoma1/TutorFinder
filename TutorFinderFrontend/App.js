@@ -18,6 +18,7 @@ import {EditTutorProfile} from './pages/EditTutorProfile'
 import { ConversationProvider, useConversationContext } from './context/ConversationContext';
 import RecoverAccount from './pages/RecoverAccount';
 import PasswordPin from './pages/PasswordPin';
+import { PasswordReset } from './pages/PasswordReset';
 
 
 const Stack = createNativeStackNavigator();
@@ -68,6 +69,7 @@ const App = () => {
          <Stack.Screen name="Register" component={Register} options={{headerShown: false}}/> 
          <Stack.Screen name="RecoverAccount" component={RecoverAccount} options={{headerShown: false}}/>
          <Stack.Screen name="PasswordPin" component={PasswordPin} options={{headerShown: false}}/>
+         <Stack.Screen name="PasswordReset" component={PasswordReset} options={{headerShown: false}}/>
         </Stack.Navigator>
       )
   }

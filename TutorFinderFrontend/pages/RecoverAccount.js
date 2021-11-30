@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import {View, TextInput, Text, TouchableOpacity, Pressable, StyleSheet} from 'react-native'
-import { API_URL} from  "@env";
+import { API_URL, RESET_PASSWORD_EMAIL} from  "@env";
 import { validate } from 'validate.js';
 import Spinner from 'react-native-loading-spinner-overlay';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RecoverAccount({navigation}) {
     const [email, setEmail] = useState('')
@@ -61,8 +62,9 @@ export default function RecoverAccount({navigation}) {
         if(isValid) {
             result = await sendRecoveryCode();
             if(result.status == 200) {
+                await AsyncStorage.setItem(RESET_PASSWORD_EMAIL, email.toLowerCase())
                 setLoading(false);
-                navigation.navigate('PasswordPin', {email: email});
+                navigation.navigate('PasswordPin', {email: email.toLowerCase()});
                 return;
             }
             else {

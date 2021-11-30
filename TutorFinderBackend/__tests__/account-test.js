@@ -1,5 +1,5 @@
 const {login, createStudentAccount, createTutorAccount, getAllTutors, uploadImageToCloudinary,
-    updateAccount, updateTutorAccount, updateProfilePicture} = require('../services/account-service');
+    updateAccount, updateTutorAccount, updateProfilePicture, updateAccountPassword} = require('../services/account-service');
 const {sendEmail, generatePasswordPin, updatePasswordPin, sendUpdatePasswordRequest, comparePasswordPins} = require('../services/email-service')
 var mongoose = require('mongoose');
 const Account = require('../models/account');
@@ -17,20 +17,15 @@ beforeAll(async () => {
         useUnifiedTopology: true,
         useFindAndModify: false,
         useCreateIndex: true
-      });
-
-      mongoose.connection.on("connected", (err, res) => {
-
-        console.log("mongoose is connected")
-      
-      })
-      
-       await Account.deleteMany({});
-       await Student.deleteMany({});
-       await Tutor.deleteMany({});
-      
-
+    });
+    mongoose.connection.on("connected", (err, res) => {
+    })
+    await Account.deleteMany({});
+    await Student.deleteMany({});
+    await Tutor.deleteMany({});
 })
+
+
 
 it('given registration credentials, createAccount() returns account', async() => {
     let subjects = ['linear algebra', 'math', 'science'];
@@ -312,8 +307,7 @@ describe('Upload profile picture', () => {
     })
 })
 
-describe('update account password',  () => {
-
+describe('account password pin',  () => {
     it('given an email, sendEmail() will return true', async () => {
        
         let response = await sendEmail("tonytoma5@outlook.com", "Password Reset", "Hello your reset code is");
@@ -387,6 +381,44 @@ describe('update account password',  () => {
         const response = await request(app)
         .post('/api/account/password-pin/lol' );
         expect(response.status).toBe(400);
+    })
+})
+
+describe("update account password", () => {
+    const email = "updatetest@gmail.com"
+    const pin = generatePasswordPin(5);
+    beforeAll(async () => {
+        let subjects = ['linear algebra', 'math', 'science'];
+        await createStudentAccount(email, 'password', "john", "doe")
+        await updatePasswordPin(email, pin);
+    })
+    
+    it('given a password, updatePassword() return true', async () => {
+        const result = await updateAccountPassword(email, pin, "bob");
+        expect(result).toBeTruthy();
+    })
+
+    it("given an incorrect pin, updatePassword() return false", async () => {
+        const result = await updateAccountPassword(email, "123", "bob");
+        expect(result).toBeFalsy();
+    })
+
+    it("given an invalid email, updatePassword() return false", async () => {
+        const result = await updateAccountPassword("noemail@email.com", "123", "bob");
+        expect(result).toBeFalsy();
+    })
+
+    it("given a password, router.put(/password/email/pin/password) return status 200", async () => {
+        const result = await request(app).put(`/api/account/password/${email}/${pin}/bob`);
+        expect(result.status).toBe(200);
+    })
+    it("given an incorrect pin, router.put(/password/email/pin/newPassword) return status 400", async () => {
+        const result = await request(app).put(`/api/account/password/${email}/11/bob`);
+        expect(result.status).toBe(400);
+    })
+    it("given an invalid email, router.put(/password/email/pin/newPassword) return status 400", async () => {
+        const result = await request(app).put(`/api/account/password/e@exm.com/111/bob`);
+        expect(result.status).toBe(400);
     })
 })
 
