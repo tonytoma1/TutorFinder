@@ -181,8 +181,8 @@ router.post("/password-pin/:email/:pin", requireParams(['email', 'pin']), async 
     }
   })
 
-router.put("/password/:email/:pin/:newPassword", requireParams(['email', 'pin']), async (req, res, next) => {
-    const accountUpdated = await updateAccountPassword(req.params.email, req.params.pin, req.params.newPassword);
+router.put("/password/:email/:passwordPin/:newPassword", requireParams(['email', 'passwordPin', 'newPassword']), async (req, res, next) => {
+    const accountUpdated = await updateAccountPassword(req.params.email, req.params.passwordPin, req.params.newPassword);
     if(accountUpdated)
       return res.status(200).json({message: "Account Updated"});
     else 

@@ -4,8 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose')
+const WebSocket = require('ws');
 const cors = require('cors');
 require('dotenv').config()
+const {WebSocketServer} = require('ws');
 
 var accountRouter = require('./routes/account-router');
 var tutorRouter = require('./routes/tutor-router');
@@ -14,6 +16,7 @@ const jwtRouter = require('./routes/jwt-router');
 var app = express();
 app.use(cors());
 app.options('*', cors());
+
 
 mongoose.connect(process.env.DATABASE_URL, {
   useNewUrlParser: true,

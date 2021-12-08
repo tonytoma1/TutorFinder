@@ -63,8 +63,7 @@ const App = () => {
         <Stack.Navigator>
           <Stack.Screen name="Home" component={Login} options={{headerShown: false}} initialParams={{
                 signedIn: signedIn,
-                setSignedIn: setSignedIn,
-                socket: socket
+                setSignedIn: setSignedIn
               }} />
          <Stack.Screen name="Register" component={Register} options={{headerShown: false}}/> 
          <Stack.Screen name="RecoverAccount" component={RecoverAccount} options={{headerShown: false}}/>

@@ -1,14 +1,13 @@
-import NavigationBar from '../components/Header';
 import {View, Text, TextInput, StyleSheet, TouchableOpacity, Image,
 KeyboardAvoidingView} from 'react-native';
 import React from 'react';
 import {useState} from 'react'
 import axios from 'axios';
-import { API_URL, REFRESH_TOKEN_STORAGE_KEY, ACCESS_TOKEN_STORAGE_KEY } from  "@env";
+import { API_URL, REFRESH_TOKEN_STORAGE_KEY, ACCESS_TOKEN_STORAGE_KEY,WEBSOCKET_URL } from  "@env";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CookieManager from '@react-native-cookies/cookies';
 import {useAuthenticationContext} from '../AuthenticationContext';
-import Logo from '../components/Header';
+import {useSocketContext} from '../context/SocketContext';
 import {useAccountContext} from '../context/AccountContext';
 import { validate } from 'validate.js';
 import { Link } from '@react-navigation/native';
@@ -19,6 +18,7 @@ const LoginPage = ({navigation, route}) => {
     const [password, setPassword] = useState();
     const authentication = useAuthenticationContext();
     const [account, setAccount] = useAccountContext();
+    const [socket, setSocket] = useSocketContext()
     const [errorMessage, setErrorMessage] = useState({});
 
     const constraints = {
@@ -73,9 +73,20 @@ const LoginPage = ({navigation, route}) => {
             authentication.accessToken = cookies.access_token.value;
             await AsyncStorage.setItem(REFRESH_TOKEN_STORAGE_KEY, authentication.refreshToken);
             await AsyncStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, authentication.accessToken);
+    
+            const url = WEBSOCKET_URL + "?id=" + loginResponse.data.account._id;
+            const soc = new WebSocket(url)
+            /*
+            soc.onopen = () => {
+                let setup = {type: "LOGIN", id: loginResponse.data.account._id}
+                soc.send(JSON.stringify(setup));
+            }
+            */
+            setSocket(soc);
 
-            route.params.socket.auth.username = email;
-            route.params.socket.connect();
+          
+
+
             route.params.setSignedIn(true);
         }
         catch(error) {

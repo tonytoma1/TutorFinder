@@ -31,7 +31,7 @@ function ConversationList({route, navigation}) {
                         element.recipients.map((recipient, indexOfRecipient) => {
                             /* Don't display the user that is currently logged in 
                             as a recipient of the conversation. */
-                            if(recipient.email != socket.auth.username) {
+                            if(recipient._id != socket.auth.username) {
                                 return (
                                     <TouchableOpacity style={styles.conversationButton} onPress={() => displayPrivateChat(recipient, element)} >
                                         <View style={styles.recipientContainer}>

@@ -1,7 +1,6 @@
 -- Incomplete
-add a updatePassword function for the frontend
+Use Redis for multithreaded chats, use WebSocket, then use horizontal scaling servers
 
-Change socket.io to make the profile id as the chat room login instead of the email because emails change
 
 keyboard overlaps input in the login screen
 
@@ -21,6 +20,7 @@ add ratings for tutors
 Filter by types, price, ratings 
 
 -- complete
+add a updatePassword function for the frontend
 Completed update tutor account for the backend
 Create profile page to view user profile
 Display Login page error message (incorrect email or password)

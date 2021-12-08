@@ -5,30 +5,30 @@ const mongoose = require('mongoose');
 
 /**
  * Saves an instant message that is being delivered between users. 
- * @param {String} recipientEmail - the email of the user that is receiving the message.
- * @param {String} senderEmail - the email of the user that is sending the message
+ * @param {String} recipientId - the id of the user that is receiving the message.
+ * @param {String} senderId - the id of the user that is sending the message
  * @param {String} message - the message that is being sent
  * @returns boolean and chat message object containing the message and if the message was successfully sent
  */
-async function saveMessage(recipientEmail, senderEmail, message) {
+async function saveMessage(recipientId, senderId, message) {
     try {
-        const recipientAccount = await Account.findOne({email: recipientEmail});
-        const senderAccount = await Account.findOne({email: senderEmail});
-        let conversation = await Conversation.findOne({recipients: {$all: [mongoose.Types.ObjectId(recipientAccount.id), 
-                                                                          mongoose.Types.ObjectId(senderAccount.id)]}})
+        //const recipientAccount = await Account.findById(recipientId);
+        //const senderAccount = await Account.findById(senderId);
+        let conversation = await Conversation.findOne({recipients: {$all: [mongoose.Types.ObjectId(recipientId), 
+                                                                          mongoose.Types.ObjectId(senderId)]}})
         
         // If the conversation doesn't exist then create it.
         if(conversation == null || conversation.length == 0) {
             let newConversation = new Conversation();
-            newConversation.recipients.push(recipientAccount.id);
-            newConversation.recipients.push(senderAccount.id);
+            newConversation.recipients.push(recipientId);
+            newConversation.recipients.push(senderId);
             await newConversation.save();
             conversation = newConversation;
         }
 
         const chat = new Message({
-            fromUser: senderAccount.id,
-            toUser: recipientAccount.id,
+            fromUser: senderId,
+            toUser: recipientId,
             message: message
         })
         await chat.save();
@@ -43,12 +43,12 @@ async function saveMessage(recipientEmail, senderEmail, message) {
 
 /**
  * Gets all of the conversations that the user is in
- * @param {String} email - the user's email.
+ * @param {String} userId - the user's id.
  */
-async function getAllConversationsForUser(email) {
+async function getAllConversationsForUser(userId) {
     let conversation = null;
     try {
-        const account = await Account.findOne({email: email});
+        const account = await Account.findById(userId);
         conversation = await Conversation.find({recipients: {$in: [mongoose.Types.ObjectId(account.id)]}})
                                          .populate('recipients', '-password').populate({path: "messages",
                                                                                         populate: {
