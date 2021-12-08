@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import {useConversationContext} from '../context/ConversationContext';
+import {useSocketContext} from '../context/SocketContext';
+import * as SocketConstants from '../constants/websocket-constants';
 
 function ConversationList({route, navigation}) {
     const [conversations, setConversations] = useConversationContext();
-    const socket = route.params.socket
+    const [socket, setSocket] = useSocketContext();
 
     useEffect(() => {
          // Load all of the conversations the user has
+         socket.onmessage = (event) => {
+            let message = JSON.parse(event.data)
+            switch(message.type) {
+                case SocketConstants.CONVERSATIONS_LIST:
+                    setConversations(message.data);
+                    break;
+            }
+         }
+         /*
+          Original implementation using socket.io
          socket.on('conversations_list', (userConversations) => {
             setConversations(userConversations);
           })
           socket.on("updated_conversations", (newConversationsList) => {
             setConversations(newConversationsList);
           })
-          
+          */
     }, [])
 
     const displayPrivateChat = (user, privateChat) => {

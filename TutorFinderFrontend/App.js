@@ -41,7 +41,7 @@ const App = () => {
         tabBarLabelStyle: {fontFamily: 'Montserrat'}
       })
       }>
-          <Tab.Screen name="Tutor" component={TutorList} initialParams={{socket: socket}} />
+          <Tab.Screen name="Tutor" component={TutorList} />
           <Tab.Screen name="Conversations" initialParams={{socket: socket}} component={ConversationList}/>
           <Tab.Screen name="Settings" component={SettingsTab}/>
       </Tab.Navigator>
@@ -80,7 +80,7 @@ const App = () => {
             {signedIn ? (
               <>
                 <Stack.Screen name="Main" component={MainTabs} options={{headerShown: false}}/>
-                <Stack.Screen name="Profile" component={Profile} initialParams={{ socket: socket }} />
+                <Stack.Screen name="Profile" component={Profile} />
                 <Stack.Screen name="PrivateChat" component={PrivateChatLog} initialParams={{ socket: socket}} />
               </>) :
               (<Stack.Screen name="NotLoggedIn" component={NotLoggedInPages} options={{headerShown: false}}/>)

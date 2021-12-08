@@ -6,11 +6,8 @@ import {View, Text,StyleSheet, Image, SafeAreaView, FlatList, TouchableOpacity} 
 
 function Profile({route, navigation}) {
     const user = route.params.profile;
-    const socket = route.params.socket;
 
     const startChat = (user) => {
-        let recipient = user;
-        let sender = socket.auth.username;
         navigation.navigate("PrivateChat", {recipient: user})
     }
 

@@ -76,18 +76,12 @@ const LoginPage = ({navigation, route}) => {
     
             const url = WEBSOCKET_URL + "?id=" + loginResponse.data.account._id;
             const soc = new WebSocket(url)
-            /*
+
             soc.onopen = () => {
-                let setup = {type: "LOGIN", id: loginResponse.data.account._id}
-                soc.send(JSON.stringify(setup));
+                setSocket(soc);
+                route.params.setSignedIn(true);
             }
-            */
-            setSocket(soc);
-
-          
-
-
-            route.params.setSignedIn(true);
+  
         }
         catch(error) {
             let result =  {message: 'Incorrect email or password'}
@@ -118,7 +112,7 @@ const LoginPage = ({navigation, route}) => {
             <TextInput style={styles.input} onChangeText={setEmail} value={email} />
             <Text style={styles.label}>Password</Text>
             <TextInput secureTextEntry={true} style={styles.input} onChangeText={setPassword} value={password} />
-            <TouchableOpacity title="Sign In" style={styles.button} onPress={loginButtonHandler}>
+            <TouchableOpacity title="Sign In" style={styles.button} onPress={async () => await loginButtonHandler()}>
                 <Text style={styles.buttonText}>Sign In</Text>
             </TouchableOpacity>
             
