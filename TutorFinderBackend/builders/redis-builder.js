@@ -3,12 +3,14 @@ const { createClient } = require('redis');
 class RedisBuilder {
     redisClient;
     subscriber;
+
     constructor(redisClient, subscriber) {
         this.redisClient = redisClient;
         this.subscriber = subscriber;
     }
 
     static async build(url) {
+        try {
         let client;
         let sub;
         if(url)
@@ -21,6 +23,11 @@ class RedisBuilder {
         await sub.connect();
         
         return new RedisBuilder(client, sub);
+        }
+        catch(error) {
+            console.log("Unable to connect to redis");
+            return null;
+        }
     }
 
     getRedisClient(){
@@ -30,7 +37,7 @@ class RedisBuilder {
     getSubscriber() {
         return this.subscriber;
     }
-    
+
 }
 
 module.exports = {RedisBuilder}

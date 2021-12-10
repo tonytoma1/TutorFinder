@@ -1,32 +1,40 @@
 import React, {useState, useRef, useEffect} from 'react'
 import {FlatList, ScrollView, View, Text, StyleSheet, Image} from 'react-native'
 import {useConversationContext} from '../context/ConversationContext';
+import {useSocketContext} from '../context/SocketContext';
+import {useAccountContext} from '../context/AccountContext';
+import { PRIVATE_MESSAGE } from '../constants/websocket-constants';
 
 // This displays the private conversation that is happening between two users
-const PrivateConversation = ({recipient, senderEmail, socket}) => {
+const PrivateConversation = ({recipient}) => {
     const [conversations, setConversations] = useConversationContext();
-    const [chat, setChat] = useState([])
+    const [socket, setSocket] = useSocketContext();
+    const [account, setAccount] = useAccountContext();
+    const [chat, setChat] = useState([]);
     const [refresh, setRefresh] = useState(false);
     const flatListRef = useRef();
-    const textInputRef = useRef();
 
     const filterMessages = () => {
-        let recipientsEmail = [recipient.email, senderEmail]
+        let recipientsId = [recipient._id, account._id]
         return conversations.filter((chat) => {
-            return (recipientsEmail.indexOf(chat.recipients[0].email) >= 0 && recipientsEmail.indexOf(chat.recipients[1].email) >= 0)
+            return (recipientsId.indexOf(chat.recipients[0]._id) >= 0 && recipientsId.indexOf(chat.recipients[1]._id) >= 0)
         });
     }
 
     useEffect(() => {
         setChat(filterMessages());
-        socket.on("message_received", (message) => {
-            // The chat state object doesn't persist after referesh. Therefore, we must reload the conversation
-            // from the conversation context
-            let privateConversation = filterMessages();
-            privateConversation[0].messages.push(message)
-            setChat(privateConversation);
-            setRefresh(!refresh)
-        })
+
+        socket.onmessage = (event) => {
+            let message = JSON.parse(event);
+            switch (message.type) {
+                case PRIVATE_MESSAGE:
+                    let privateConversation = filterMessages();
+                    privateConversation[0].messages.push(message)
+                    setChat(privateConversation);
+                    setRefresh(!refresh)
+                    break;
+            }
+        }
     }, [])
 
     const displayMessage = ({item}) => {
@@ -35,15 +43,15 @@ const PrivateConversation = ({recipient, senderEmail, socket}) => {
                 return(
                     <View style={styles.chatBubble} key={element._id}>
                         <View style={styles.profilePictureContainer}>
-                            {element.fromUser.email != socket.auth.username ? <Image style={styles.profilePicture} source={{ uri: element.fromUser.profilePicture }} /> : <Image />}
+                            {element.fromUser.email != account.email ? <Image style={styles.profilePicture} source={{ uri: element.fromUser.profilePicture }} /> : <Image />}
                         </View>
                         <View style={styles.chatContainer}>
                             <View style={styles.dateContainer}>
                                 <View style={styles.leftChat}>
-                                    {element.fromUser.email == socket.auth.username ? <Text></Text> : <Text>{element.date}</Text>}
+                                    {element.fromUser.email == account.email ? <Text></Text> : <Text>{element.date}</Text>}
                                 </View>
                                 <View style={styles.rightChat}>
-                                    {element.fromUser.email == socket.auth.username ? <Text>{element.date}</Text> : <Text></Text>}
+                                    {element.fromUser.email == account.email ? <Text>{element.date}</Text> : <Text></Text>}
                                 </View>
                             </View>
                             <View style={styles.messageContainer}>
@@ -54,10 +62,10 @@ const PrivateConversation = ({recipient, senderEmail, socket}) => {
                                     on the left column.
                                 */ }
                                     <View style={styles.leftChat}>
-                                        {element.fromUser.email != socket.auth.username ? <Text style={[styles.rightChatContent, styles.chatContent]}>{element.message}</Text> : <Text></Text>}
+                                        {element.fromUser.email != account.email ? <Text style={[styles.rightChatContent, styles.chatContent]}>{element.message}</Text> : <Text></Text>}
                                     </View>
                                     <View style={styles.rightChat}>
-                                        {element.fromUser.email == socket.auth.username ? <Text style={[styles.leftChatContent, styles.chatContent]}>{element.message}</Text> : <Text></Text>}
+                                        {element.fromUser.email == account.email ? <Text style={[styles.leftChatContent, styles.chatContent]}>{element.message}</Text> : <Text></Text>}
                                     </View>
                             </View>
                         </View>

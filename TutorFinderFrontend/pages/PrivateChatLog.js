@@ -3,17 +3,18 @@ import { TextInput } from 'react-native';
 import { ScrollView, Text, View, Image, StyleSheet, Button, Keyboard,KeyboardAvoidingView } from 'react-native';
 import {useConversationContext} from '../context/ConversationContext';
 import {PrivateConversation} from '../components/PrivateConversation';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview'
-import {Header} from '@react-navigation/stack'
-import { FlatList } from 'react-native-gesture-handler';
+import {useSocketContext} from '../context/SocketContext';
+import {useAccountContext} from '../context/AccountContext';
+import {PRIVATE_MESSAGE} from '../constants/websocket-constants'
 
 function PrivateChatLog({route}) {
     const [chatLog, setChatLog] = useState([]);
     const [chatMessage, setChatMessage] = useState([]);
-    const [senderEmail, setSenderEmail] = useState('');
+    const [senderId, setSenderId] = useState('');
     const [refresh, setRefresh] = useState(false);
-    const socket = route.params.socket;
     const [conversations, setConversations] = useConversationContext();
+    const [account, setAccount] = useAccountContext();
+    const [socket, setSocket] = useSocketContext();
     // The user that is going to recieve the instant messages.
     const recipientUser = route.params.recipient;
     const flatListRef = useRef();
@@ -22,11 +23,11 @@ function PrivateChatLog({route}) {
 
     useEffect(() => {
         // This is the user that is currently logged in.
-        setSenderEmail(socket.auth.username);
+        setSenderId(account._id);
         // Get the private messages that only pertains to the recipient and to the user that is logged in.
-        let recipientsEmail = [recipientUser.email, socket.auth.username]
+        let recipientsId = [recipientUser._id, account._id]
         let messagesFound = conversations.filter((chat) => {
-            return (recipientsEmail.indexOf(chat.recipients[0].email) >= 0 && recipientsEmail.indexOf(chat.recipients[1].email) >= 0)
+            return (recipientsId.indexOf(chat.recipients[0]._id) >= 0 && recipientsId.indexOf(chat.recipients[1]._id) >= 0)
         })
         setChatLog(messagesFound)
         setRefresh(!refresh);
@@ -36,35 +37,32 @@ function PrivateChatLog({route}) {
 
     const sendPrivateMessage = () => {
         let messageContent = {
-            recipientEmail: recipientUser.email,
-            senderEmail: senderEmail,
+            recipientId: recipientUser._id,
+            senderId: senderId,
             message: chatMessage
         }
-
-        setChatMessage('');        
-        socket.emit('message_sent', messageContent);
+        setChatMessage('');    
+        let message = JSON.stringify({type: PRIVATE_MESSAGE, data: messageContent});    
+        socket.send(message);
     }
 
    
 
     return(
         <KeyboardAvoidingView style={styles.entireChatContainer} behavior="padding"
-        keyboardVerticalOffset={-500}>
+            keyboardVerticalOffset={-500}>
             <View style={styles.profileContainer}>
-                <Image style={styles.profilePicture}source={{uri: recipientUser.profilePicture}}/>
+                <Image style={styles.profilePicture} source={{ uri: recipientUser.profilePicture }} />
                 <Text>{recipientUser.firstName} {recipientUser.lastName}</Text>
             </View>
 
-    
-                <PrivateConversation recipient={recipientUser} senderEmail={socket.auth.username}
-                                 socket={socket}/>
-            
+            <PrivateConversation recipient={recipientUser} />
 
             <View style={styles.sendChatContainer}>
-                    <TextInput style={styles.chatInput} onChangeText={setChatMessage} value={chatMessage}
-                    ref={textInputRef}  key={"message"} />
-                    <Button title="Send" style={styles.chatButton} onPress={() => sendPrivateMessage()} />
-            </View>            
+                <TextInput style={styles.chatInput} onChangeText={setChatMessage} value={chatMessage}
+                    ref={textInputRef} key={"message"} />
+                <Button title="Send" style={styles.chatButton} onPress={() => sendPrivateMessage()} />
+            </View>
         </KeyboardAvoidingView>
     )
 }

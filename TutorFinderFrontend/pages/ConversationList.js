@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import {useConversationContext} from '../context/ConversationContext';
 import {useSocketContext} from '../context/SocketContext';
+import {useAccountContext} from '../context/AccountContext';
 import * as SocketConstants from '../constants/websocket-constants';
 
 function ConversationList({route, navigation}) {
     const [conversations, setConversations] = useConversationContext();
     const [socket, setSocket] = useSocketContext();
+    const [account, setAccount] = useAccountContext();
 
     useEffect(() => {
          // Load all of the conversations the user has
@@ -16,18 +18,17 @@ function ConversationList({route, navigation}) {
                 case SocketConstants.CONVERSATIONS_LIST:
                     setConversations(message.data);
                     break;
+                case SocketConstants.PRIVATE_MESSAGE: 
+                    // TODO recieve message
+                    updateConversationList(message.data);
+                    break;
             }
          }
-         /*
-          Original implementation using socket.io
-         socket.on('conversations_list', (userConversations) => {
-            setConversations(userConversations);
-          })
-          socket.on("updated_conversations", (newConversationsList) => {
-            setConversations(newConversationsList);
-          })
-          */
     }, [])
+
+    const updateConversationList = () => {
+
+    }
 
     const displayPrivateChat = (user, privateChat) => {
         navigation.navigate('PrivateChat', {recipient: user});
@@ -43,7 +44,7 @@ function ConversationList({route, navigation}) {
                         element.recipients.map((recipient, indexOfRecipient) => {
                             /* Don't display the user that is currently logged in 
                             as a recipient of the conversation. */
-                            if(recipient._id != socket.auth.username) {
+                            if(recipient._id != account._id) {
                                 return (
                                     <TouchableOpacity style={styles.conversationButton} onPress={() => displayPrivateChat(recipient, element)} >
                                         <View style={styles.recipientContainer}>
@@ -53,7 +54,7 @@ function ConversationList({route, navigation}) {
                                             <View style={[styles.col, styles.messageContent]}>
                                                 <Text style={styles.recipientName}>{recipient.firstName} {recipient.lastName}</Text>
                                                 <Text style={styles.messageBox}>
-                                                    {element.messages[element.messages.length - 1].fromUser.email == socket.auth.username ?
+                                                    {element.messages[element.messages.length - 1].fromUser.email == account.email ?
                                                     <Text >(you): </Text> : <Text>{element.messages[element.messages.length - 1].fromUser.firstName}: </Text>}
                                                     <Text >{element.messages[element.messages.length - 1].message} </Text>                 
                                                 </Text>

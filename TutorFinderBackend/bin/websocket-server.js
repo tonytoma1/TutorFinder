@@ -1,7 +1,7 @@
 const {WebSocketServer} = require("ws");
 const { createClient } = require('redis');
 const {RedisBuilder} = require("../builders/redis-builder");
-const {CONVERSATIONS_LIST} = require("../constants/websocket-constants");
+const {CONVERSATIONS_LIST, PRIVATE_MESSAGE} = require("../constants/websocket-constants");
 const {getAllConversationsForUser, saveMessage} = require('../services/chat-service');
 
 function webSocketServer(server) {
@@ -18,11 +18,20 @@ function webSocketServer(server) {
 
       // Setup Redis connection
       let redis = await RedisBuilder.build(); // default connection to localhost
-      redis.getRedisClient().on('error', (err) => console.log('Redis Client Error', err));
-      redis.getSubscriber().subscribe(redisChannel, (message) => {
-        console.log(message);
-      });
-
+      if(redis != null) {
+        redis.getRedisClient().on('error', (err) => console.log('Redis Client Error', err));
+        redis.getSubscriber().subscribe(redisChannel, (message) => {
+          // send message to the recipient in the message content
+          let content = JSON.parse(message);
+          let socket = socketMap.get(content.data.recipientId);
+          socket.send(message);
+          console.log(message);
+        });
+      }
+      else {
+        // TODO attempt to keep connecting to redis.
+      }
+     
       // load the user's initial conversation list
       let conversations =  await getAllConversationsForUser(userId);
       let convoData = JSON.stringify({type: CONVERSATIONS_LIST, data: conversations });
@@ -31,9 +40,11 @@ function webSocketServer(server) {
       socket.on("message", async (input) => {
         let message = JSON.parse(input);
         switch(message.type) {
-          case "CHAT":
-            
-        
+          case PRIVATE_MESSAGE:
+              // Send a private message to another user
+              let recipientChannel = "user:" + message.data.recipientId;
+              redis.getRedisClient().publish(recipientChannel, JSON.stringify(message))
+              await saveMessage(message.data.recipientId, message.data.senderId, message.data.message);
             break;
           default:
             break;
