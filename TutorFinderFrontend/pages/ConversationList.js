@@ -5,6 +5,7 @@ import {useSocketContext} from '../context/SocketContext';
 import {useAccountContext} from '../context/AccountContext';
 import * as SocketConstants from '../constants/websocket-constants';
 
+
 function ConversationList({route, navigation}) {
     const [conversations, setConversations] = useConversationContext();
     const [socket, setSocket] = useSocketContext();
@@ -12,15 +13,12 @@ function ConversationList({route, navigation}) {
 
     useEffect(() => {
          // Load all of the conversations the user has
+         socket.send(JSON.stringify({type: SocketConstants.CONVERSATIONS_LIST}));
          socket.onmessage = (event) => {
             let message = JSON.parse(event.data)
             switch(message.type) {
                 case SocketConstants.CONVERSATIONS_LIST:
                     setConversations(message.data);
-                    break;
-                case SocketConstants.PRIVATE_MESSAGE: 
-                    // TODO recieve message
-                    updateConversationList(message.data);
                     break;
             }
          }

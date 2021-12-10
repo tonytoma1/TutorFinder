@@ -29,7 +29,7 @@ const PrivateConversation = ({recipient}) => {
             switch (message.type) {
                 case PRIVATE_MESSAGE:
                     let privateConversation = filterMessages();
-                    privateConversation[0].messages.push(message)
+                    privateConversation[0].messages.push(message.data.message)
                     setChat(privateConversation);
                     setRefresh(!refresh)
                     break;

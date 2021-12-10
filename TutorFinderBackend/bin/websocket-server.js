@@ -33,9 +33,11 @@ function webSocketServer(server) {
       }
      
       // load the user's initial conversation list
+      /*
       let conversations =  await getAllConversationsForUser(userId);
       let convoData = JSON.stringify({type: CONVERSATIONS_LIST, data: conversations });
       socket.send(convoData);
+      */
 
       socket.on("message", async (input) => {
         let message = JSON.parse(input);
@@ -45,6 +47,11 @@ function webSocketServer(server) {
               let recipientChannel = "user:" + message.data.recipientId;
               redis.getRedisClient().publish(recipientChannel, JSON.stringify(message))
               await saveMessage(message.data.recipientId, message.data.senderId, message.data.message);
+            break;
+          case CONVERSATIONS_LIST:
+            let conversations =  await getAllConversationsForUser(userId);
+            let convoData = JSON.stringify({type: CONVERSATIONS_LIST, data: conversations });
+            socket.send(convoData);
             break;
           default:
             break;
