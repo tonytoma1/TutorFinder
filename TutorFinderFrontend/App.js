@@ -41,7 +41,10 @@ const App = () => {
   const SettingsTab = () => {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Settings" component={Settings}></Stack.Screen>
+        <Stack.Screen name="Settings" component={Settings} initialParams={{
+          signedIn: signedIn,
+          setSignedIn: setSignedIn
+        }} />
         <Stack.Screen name="EditStudent" component={EditStudentProfile} />
         <Stack.Screen name="EditTutor" component={EditTutorProfile} />
       </Stack.Navigator>

@@ -2,9 +2,11 @@ import React, {useState} from 'react';
 import {Text, ScrollView, Pressable, StyleSheet} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {useAccountContext} from '../context/AccountContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {REFRESH_TOKEN_STORAGE_KEY, ACCESS_TOKEN_STORAGE_KEY } from "@env";
 
-function Settings ({navigation}) {
-    const [account, setAccount] = useAccountContext();
+function Settings ({navigation, route}) {
+    const [account, setAccount] = useAccountContext()
     const TUTOR = 'Tutor';
     const STUDENT = 'Student';
 
@@ -19,12 +21,19 @@ function Settings ({navigation}) {
         }
     }
 
+    const logout = async () => {
+        await AsyncStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY)
+        await AsyncStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY)
+        setAccount([])
+        route.params.setSignedIn(false);
+    }
+
     return(
         <ScrollView>
             <Pressable style={[styles.row, styles.pageLink]} onPress={() => {editAccount()}}>
                 <Text style={styles.linkFont}>Edit Account</Text>
             </Pressable>
-            <Pressable style={[styles.row, styles.pageLink]} >
+            <Pressable style={[styles.row, styles.pageLink]} onPress={async () => await logout()} >
                 <Text style={styles.linkFont}>Logout</Text>
             </Pressable>
         </ScrollView>

@@ -1,11 +1,10 @@
 -- Incomplete
 
-Conversations list doesn't update when a new chat is created. Also conversation list doesn't appear sometimes upon load up
-Try emitting a message to the backend to pull the conversation list for the user instead of sending the conversation list upon login
+Conversations list doesn't update when a new chat is created. (Created and works, but needs to be tested more. )
 
-Add signout functionality
 Create loading icon/splash screen
 password recovery email needs to connected to an actual provider and not gmail
+Add confirmation modal for logout
 add error in login page to display when backend isnt up/working/connected
 
 
@@ -14,6 +13,7 @@ Filter by types, price, ratings
 add ratings for tutors
 
 -- complete
+Add signout functionality
 Add loading spinner to login page
 password recovery page: enter email is case sensitive and it shouldn't 
 keyboard overlaps input in the login screen
