@@ -8,11 +8,8 @@ import {useAccountContext} from '../context/AccountContext';
 import {PRIVATE_MESSAGE} from '../constants/websocket-constants'
 
 function PrivateChatLog({route}) {
-    const [chatLog, setChatLog] = useState([]);
     const [chatMessage, setChatMessage] = useState([]);
     const [senderId, setSenderId] = useState('');
-    const [refresh, setRefresh] = useState(false);
-    const [conversations, setConversations] = useConversationContext();
     const [account, setAccount] = useAccountContext();
     const [socket, setSocket] = useSocketContext();
     // The user that is going to recieve the instant messages.
@@ -24,20 +21,15 @@ function PrivateChatLog({route}) {
     useEffect(() => {
         // This is the user that is currently logged in.
         setSenderId(account._id);
-        // Get the private messages that only pertains to the recipient and to the user that is logged in.
-        let recipientsId = [recipientUser._id, account._id]
-        let messagesFound = conversations.filter((chat) => {
-            return (recipientsId.indexOf(chat.recipients[0]._id) >= 0 && recipientsId.indexOf(chat.recipients[1]._id) >= 0)
-        })
-        setChatLog(messagesFound)
-        setRefresh(!refresh);
 
-    }, [conversations])
+    }, [])
 
 
     const sendPrivateMessage = () => {
         let messageContent = {
             recipientId: recipientUser._id,
+            recipient: recipientUser,
+            sender: account,
             senderId: senderId,
             message: chatMessage
         }
@@ -45,8 +37,6 @@ function PrivateChatLog({route}) {
         let message = JSON.stringify({type: PRIVATE_MESSAGE, data: messageContent});    
         socket.send(message);
     }
-
-   
 
     return(
         <KeyboardAvoidingView style={styles.entireChatContainer} behavior="padding"

@@ -14,6 +14,7 @@ const PrivateConversation = ({recipient}) => {
     const [refresh, setRefresh] = useState(false);
     const flatListRef = useRef();
 
+    // TODO pass down the conversation from a parent component to avoid this O(n) search. 
     const filterMessages = () => {
         let recipientsId = [recipient._id, account._id]
         return conversations.filter((chat) => {
@@ -23,19 +24,7 @@ const PrivateConversation = ({recipient}) => {
 
     useEffect(() => {
         setChat(filterMessages());
-
-        socket.onmessage = (event) => {
-            let message = JSON.parse(event);
-            switch (message.type) {
-                case PRIVATE_MESSAGE:
-                    let privateConversation = filterMessages();
-                    privateConversation[0].messages.push(message.data.message)
-                    setChat(privateConversation);
-                    setRefresh(!refresh)
-                    break;
-            }
-        }
-    }, [])
+    }, [conversations])
 
     const displayMessage = ({item}) => {
         return (

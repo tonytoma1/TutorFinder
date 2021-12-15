@@ -25,19 +25,11 @@ function webSocketServer(server) {
           let content = JSON.parse(message);
           let socket = socketMap.get(content.data.recipientId);
           socket.send(message);
-          console.log(message);
         });
       }
       else {
         // TODO attempt to keep connecting to redis.
       }
-     
-      // load the user's initial conversation list
-      /*
-      let conversations =  await getAllConversationsForUser(userId);
-      let convoData = JSON.stringify({type: CONVERSATIONS_LIST, data: conversations });
-      socket.send(convoData);
-      */
 
       socket.on("message", async (input) => {
         let message = JSON.parse(input);
@@ -45,8 +37,10 @@ function webSocketServer(server) {
           case PRIVATE_MESSAGE:
               // Send a private message to another user
               let recipientChannel = "user:" + message.data.recipientId;
+              let savedMessage = await saveMessage(message.data.recipientId, message.data.senderId, message.data.message);
+              message.date = savedMessage.message.date;
+              message._id = savedMessage.message.id;
               redis.getRedisClient().publish(recipientChannel, JSON.stringify(message))
-              await saveMessage(message.data.recipientId, message.data.senderId, message.data.message);
             break;
           case CONVERSATIONS_LIST:
             let conversations =  await getAllConversationsForUser(userId);

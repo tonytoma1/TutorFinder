@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
  * @param {String} recipientId - the id of the user that is receiving the message.
  * @param {String} senderId - the id of the user that is sending the message
  * @param {String} message - the message that is being sent
- * @returns boolean and chat message object containing the message and if the message was successfully sent
+ * @returns boolean and chat message object containing the message and if the message was successfully saved
  */
 async function saveMessage(recipientId, senderId, message) {
     try {

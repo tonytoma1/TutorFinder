@@ -12,6 +12,8 @@ import {useAccountContext} from '../context/AccountContext';
 import { validate } from 'validate.js';
 import { Link } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
+import * as SocketConstants from '../constants/websocket-constants';
+
 
 const LoginPage = ({navigation, route}) => {
     const [email, setEmail] = useState();

@@ -1,5 +1,8 @@
 -- Incomplete
-Use Redis for multithreaded chats, use WebSocket, then use horizontal scaling servers
+Use Redis for multithreaded chats, use WebSocket, then use horizontal scaling servers (done. just testing)
+
+When the message is sent from the frontend, make a date function that creates a date and then use that date
+to insert it into the database. 
 
 
 keyboard overlaps input in the login screen
