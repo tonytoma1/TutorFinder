@@ -32,7 +32,8 @@ export default function RecoverAccount({navigation}) {
     }
 
     const sendRecoveryCode = async () => {
-        const url = API_URL + `api/account/password-pin/${email}`
+        let emailWanted = email.toLowerCase();
+        const url = API_URL + `api/account/password-pin/${emailWanted}`
         let result;
         try {
             result = await axios.post(url);

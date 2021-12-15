@@ -4,6 +4,7 @@ import {useConversationContext} from '../context/ConversationContext';
 import {useSocketContext} from '../context/SocketContext';
 import {useAccountContext} from '../context/AccountContext';
 import { PRIVATE_MESSAGE } from '../constants/websocket-constants';
+import { format } from 'date-fns'
 
 // This displays the private conversation that is happening between two users
 const PrivateConversation = ({recipient}) => {
@@ -26,6 +27,10 @@ const PrivateConversation = ({recipient}) => {
         setChat(filterMessages());
     }, [conversations])
 
+    const formatDate = (currentDate) => {
+        return format(new Date(currentDate), 'hh:mm a LLLL d yyyy')
+    }
+
     const displayMessage = ({item}) => {
         return (
             item.messages.map((element, index) => {
@@ -37,10 +42,10 @@ const PrivateConversation = ({recipient}) => {
                         <View style={styles.chatContainer}>
                             <View style={styles.dateContainer}>
                                 <View style={styles.leftChat}>
-                                    {element.fromUser.email == account.email ? <Text></Text> : <Text>{element.date}</Text>}
+                                    {element.fromUser.email == account.email ? <Text></Text> : <Text style={styles.date}>{formatDate(element.date)}</Text>}
                                 </View>
                                 <View style={styles.rightChat}>
-                                    {element.fromUser.email == account.email ? <Text>{element.date}</Text> : <Text></Text>}
+                                    {element.fromUser.email == account.email ? <Text style={styles.date}>{formatDate(element.date)}</Text> : <Text></Text>}
                                 </View>
                             </View>
                             <View style={styles.messageContainer}>
@@ -167,7 +172,10 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         color: 'white',
         fontSize: 15
-        
+    },
+    date: {
+        fontSize: 11,
+        marginLeft: 5
     }
    
 })

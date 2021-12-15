@@ -1,28 +1,24 @@
 -- Incomplete
-Use Redis for multithreaded chats, use WebSocket, then use horizontal scaling servers (done. just testing)
-
-When the message is sent from the frontend, make a date function that creates a date and then use that date
-to insert it into the database. 
-
-
-keyboard overlaps input in the login screen
-
-password recovery page: enter email is case sensitive and it shouldn't 
-
-add error in login page to display when backend isnt up/working/connected
 
 Conversations list doesn't update when a new chat is created. Also conversation list doesn't appear sometimes upon load up
 Try emitting a message to the backend to pull the conversation list for the user instead of sending the conversation list upon login
 
 Add signout functionality
-Change date format for chats
 Create loading icon/splash screen
-add ratings for tutors
+password recovery email needs to connected to an actual provider and not gmail
+add error in login page to display when backend isnt up/working/connected
+
 
 -- polish list
-Filter by types, price, ratings 
+Filter by types, price, ratings
+add ratings for tutors
 
 -- complete
+Add loading spinner to login page
+password recovery page: enter email is case sensitive and it shouldn't 
+keyboard overlaps input in the login screen
+Modify dates for the chat
+Use Redis for multithreaded chats, use WebSocket, then use horizontal scaling servers (done. just testing)
 add a updatePassword function for the frontend
 Completed update tutor account for the backend
 Create profile page to view user profile

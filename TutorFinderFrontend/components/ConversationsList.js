@@ -27,7 +27,7 @@ const ConversationList = ({navigation}) => {
 
     const updateConversation = (message) => {
         let id; 
-        if(message.data.senderId == account.id) {
+        if(message.data.senderId == account._id) {
             /* The user who originally sent the message now recieved his own message.
              Therefore, when we filter through the conversation list, we are going to look
              for the specific recipient. If we look for the senderId then every 
@@ -39,7 +39,14 @@ const ConversationList = ({navigation}) => {
             id = message.data.senderId;
         }
         let conversationIndex = filterMessages(id)
-        pushMessage(conversationIndex, message)
+
+        if(conversationIndex == -1) {
+            // No conversation was found. Therefore add a new conversation.
+            addConversation(message)
+        }   
+        else {
+            pushMessage(conversationIndex, message)
+        }
     }
     
     // Helper function that gets a specific conversation's index
@@ -60,6 +67,22 @@ const ConversationList = ({navigation}) => {
             _id: newMessage._id
         }
         conversations[conversationIndex].messages.push(message);
+        setConversations([...conversations]);
+    }
+
+    const addConversation = (message) => {
+        let msg = {
+            date: message.date,
+            message: message.data.message,
+            fromUser: message.data.sender,
+            toUser: message.data.recipient,
+            _id: message._id
+        }
+        let convo = {
+            recipients: [message.data.sender, message.data.recipient],
+            messages: [msg]
+        }
+        conversations.push(convo);
         setConversations([...conversations]);
     }
 

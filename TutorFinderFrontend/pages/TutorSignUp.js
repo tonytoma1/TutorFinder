@@ -66,7 +66,7 @@ function TutorForm(props) {
         let userData = {
             firstName: firstName,
             lastName: lastName,
-            email: email,
+            email: email.toLowerCase(),
             password: password,
             confirmPassword: confirmPassword,
             subjects: taughtSubjects,

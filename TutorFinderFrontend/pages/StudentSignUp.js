@@ -9,7 +9,7 @@ import { baseProps } from 'react-native-gesture-handler/lib/typescript/handlers/
 function StudentSignUp (props) {
     const [firstName, setFirstName] = useState(null);
     const [lastName, setLastName] = useState(null);
-    const [email, setEmail] = useState(null);
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState(null);
     const [confirmPassword, setConfirmPassword] = useState(null);
     const [errors, setErrors] = useState([]);
@@ -46,7 +46,7 @@ function StudentSignUp (props) {
             let userData = {
                 firstName: firstName,
                 lastName: lastName,
-                email: email,
+                email: email.toLowerCase(),
                 password: password,
                 confirmPassword: confirmPassword
             }
