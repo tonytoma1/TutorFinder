@@ -41,6 +41,8 @@ function webSocketServer(server) {
               message.date = savedMessage.message.date;
               message._id = savedMessage.message.id;
               redis.getRedisClient().publish(recipientChannel, JSON.stringify(message))
+              let senderSocket = socketMap.get(message.data.senderId);
+              senderSocket.send(JSON.stringify(message))
             break;
           case CONVERSATIONS_LIST:
             let conversations =  await getAllConversationsForUser(userId);

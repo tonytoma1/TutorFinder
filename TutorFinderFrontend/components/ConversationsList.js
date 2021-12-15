@@ -26,14 +26,26 @@ const ConversationList = ({navigation}) => {
     }, [conversations])
 
     const updateConversation = (message) => {
-        let conversationIndex = filterMessages(message.data.senderId)
+        let id; 
+        if(message.data.senderId == account.id) {
+            /* The user who originally sent the message now recieved his own message.
+             Therefore, when we filter through the conversation list, we are going to look
+             for the specific recipient. If we look for the senderId then every 
+             conversation in the conversation list would match.
+             */  
+            id = message.data.recipientId
+        }
+        else  {
+            id = message.data.senderId;
+        }
+        let conversationIndex = filterMessages(id)
         pushMessage(conversationIndex, message)
     }
     
     // Helper function that gets a specific conversation's index
-    const filterMessages = (senderId) => {
+    const filterMessages = (userId) => {
         let privateConversation = conversations.findIndex((chat) => {
-            return chat.recipients[0]._id == senderId || chat.recipients[1]._id == senderId
+            return chat.recipients[0]._id == userId || chat.recipients[1]._id == userId
           })
         return privateConversation
     }
