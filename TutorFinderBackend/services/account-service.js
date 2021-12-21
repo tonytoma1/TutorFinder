@@ -53,6 +53,35 @@ async function createTutorAccount(email, password, firstName, lastName, subjects
     
 }
 
+async function updateFirebaseToken(accountId, firebaseToken) {
+    if(!firebaseToken || !accountId)
+        return false;
+    
+    try {
+        await Account.findByIdAndUpdate(accountId, {firebaseToken: firebaseToken}, {new: true});
+    }
+    catch(error) {
+        return false;
+    }
+    return true;
+}
+
+async function getFirebaseToken(accountId) {
+    if(!accountId)
+        return null;
+    let account;
+    try {
+        account = await Account.findById(accountId);
+    }
+    catch(error) {
+        return null;
+    }
+    if(account.firebaseToken == undefined || account.firebaseToken == null)
+        return null;
+
+    return account.firebaseToken;
+}
+
 
 async function login(email, password) {
     const account = await Account.findOne({email: email}).populate('accountType')
@@ -193,6 +222,9 @@ async function updateAccountPassword(email, pin, newPassword) {
 }
 
 
+
+
 module.exports = {login, createStudentAccount, createTutorAccount, getAllTutors, 
                     uploadImageToCloudinary, updateAccount,
-                    updateTutorAccount, updateProfilePicture, updateAccountPassword}
+                    updateTutorAccount, updateProfilePicture, updateAccountPassword,
+                    updateFirebaseToken, getFirebaseToken}

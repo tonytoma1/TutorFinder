@@ -5,6 +5,7 @@ import { useSocketContext } from '../context/SocketContext';
 import { useAccountContext } from '../context/AccountContext';
 import * as SocketConstants from '../constants/websocket-constants';
 import ConversationList from '../components/ConversationsList';
+import {AppState } from 'react-native';
 
 function ConversationContainer({ route, navigation }) {
     const [socket, setSocket] = useSocketContext();

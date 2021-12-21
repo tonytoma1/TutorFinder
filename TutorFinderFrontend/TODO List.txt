@@ -1,5 +1,10 @@
 -- Incomplete
 
+remove socket from map and redis connection on close
+
+Firebase tests in the backend
+use firebase in the backend for notifications
+
 Conversations list doesn't update when a new chat is created. (Created and works, but needs to be tested more. )
 
 Create loading icon/splash screen

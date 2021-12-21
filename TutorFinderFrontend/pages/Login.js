@@ -5,7 +5,8 @@ import {
 import React from 'react';
 import { useState } from 'react'
 import axios from 'axios';
-import { API_URL, REFRESH_TOKEN_STORAGE_KEY, ACCESS_TOKEN_STORAGE_KEY, WEBSOCKET_URL } from "@env";
+import { API_URL, REFRESH_TOKEN_STORAGE_KEY, ACCESS_TOKEN_STORAGE_KEY, WEBSOCKET_URL,
+    ACCOUNT_KEY } from "@env";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CookieManager from '@react-native-cookies/cookies';
 import { useAuthenticationContext } from '../AuthenticationContext';
@@ -16,7 +17,7 @@ import { Link } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import * as SocketConstants from '../constants/websocket-constants';
 import Spinner from 'react-native-loading-spinner-overlay';
-
+import messaging, { firebase } from '@react-native-firebase/messaging';
 
 
 const LoginPage = ({ navigation, route }) => {
@@ -82,8 +83,9 @@ const LoginPage = ({ navigation, route }) => {
             authentication.accessToken = cookies.access_token.value;
             await AsyncStorage.setItem(REFRESH_TOKEN_STORAGE_KEY, authentication.refreshToken);
             await AsyncStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, authentication.accessToken);
-
-            const url = WEBSOCKET_URL + "?id=" + loginResponse.data.account._id;
+            await AsyncStorage.setItem(ACCOUNT_KEY, JSON.stringify(loginResponse.data.account));
+            const firebaseToken = await messaging().getToken();
+            const url = WEBSOCKET_URL + "?id=" + loginResponse.data.account._id + "&token=" + firebaseToken;
             const soc = new WebSocket(url)
 
             soc.onopen = () => {

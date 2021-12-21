@@ -3,6 +3,12 @@ const { createClient } = require('redis');
 const {RedisBuilder} = require("../builders/redis-builder");
 const {CONVERSATIONS_LIST, PRIVATE_MESSAGE} = require("../constants/websocket-constants");
 const {getAllConversationsForUser, saveMessage} = require('../services/chat-service');
+const {updateFirebaseToken, getFirebaseToken} = require("../services/account-service");
+const {getMessaging} = require('firebase-admin/messaging')
+require('dotenv').config()
+
+const LOGO = '../logo/graduation'
+const THEME_COLOR = '#11c281'
 
 function webSocketServer(server) {
     const webSocketServer = new WebSocketServer({server: server})
@@ -13,8 +19,11 @@ function webSocketServer(server) {
       // get url parameters
       const urlSearchParams = new URLSearchParams(request.url);
       const userId = urlSearchParams.get("/?id");
+      const firebaseToken = urlSearchParams.get("token");
       const redisChannel = "user:" + userId;
+
       socketMap.set(userId, socket);
+      await updateFirebaseToken(userId, firebaseToken);
 
       // Setup Redis connection
       let redis = await RedisBuilder.build(); // default connection to localhost
@@ -40,6 +49,12 @@ function webSocketServer(server) {
               let savedMessage = await saveMessage(message.data.recipientId, message.data.senderId, message.data.message);
               message.date = savedMessage.message.date;
               message._id = savedMessage.message.id;
+
+              let firebaseToken = await getFirebaseToken(message.data.recipientId);
+              let recipientName = message.data.recipient.firstName + " " + message.data.recipient.lastName;
+              let notification = createNotification(recipientName, message.data.message, firebaseToken);
+              await getMessaging().send(notification);
+
               redis.getRedisClient().publish(recipientChannel, JSON.stringify(message))
               let senderSocket = socketMap.get(message.data.senderId);
               senderSocket.send(JSON.stringify(message))
@@ -60,7 +75,30 @@ function webSocketServer(server) {
     webSocketServer.on("error", (err) => {
       console.log(err);
     })
+
+    webSocketServer.on("close", (event) => {
+      let i = event;
+    })
 }
 
+
+const createNotification = (title, body, firebaseToken) => {
+  let message =  {
+    notification: {
+      title: title,
+      body: body
+    },
+    android: {
+      notification: {
+        icon: LOGO,
+        color: THEME_COLOR,
+        sound: "default"
+      }
+    },
+    token: firebaseToken
+  }
+
+  return message;
+}
 
 module.exports = {webSocketServer}

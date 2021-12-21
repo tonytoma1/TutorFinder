@@ -11,6 +11,9 @@ const {cpus} = require('os');
 var numberOfCPUs = require('os').cpus().length;
 const cluster = require('cluster');
 const {webSocketServer} = require("./websocket-server");
+const { initializeApp, applicationDefault } = require('firebase-admin/app');
+require('dotenv').config()
+
 
 /**
  * Get port from environment and store in Express.
@@ -19,6 +22,11 @@ const {webSocketServer} = require("./websocket-server");
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
+
+// Initialize firebase 
+initializeApp({
+  credential: applicationDefault()
+})
 
 /**
  * Create HTTP server.

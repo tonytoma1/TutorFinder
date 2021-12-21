@@ -1,5 +1,6 @@
 const {login, createStudentAccount, createTutorAccount, getAllTutors, uploadImageToCloudinary,
-    updateAccount, updateTutorAccount, updateProfilePicture, updateAccountPassword} = require('../services/account-service');
+    updateAccount, updateTutorAccount, updateProfilePicture, updateAccountPassword,
+updateFirebaseToken, getFirebaseToken} = require('../services/account-service');
 const {sendEmail, generatePasswordPin, updatePasswordPin, sendUpdatePasswordRequest, comparePasswordPins} = require('../services/email-service')
 var mongoose = require('mongoose');
 const Account = require('../models/account');
@@ -421,6 +422,8 @@ describe("update account password", () => {
         expect(result.status).toBe(400);
     })
 })
+
+
 
 
 afterAll((done) => {
